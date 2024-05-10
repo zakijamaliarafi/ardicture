@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comment_replies', function (Blueprint $table) {
-            $table->id('comment_reply_id');
-            $table->foreignId('comment_id')->constrained(table: 'comments', column: 'comment_id')->cascadeOnDelete();
-            $table->longText('comment');
+        Schema::create('user_liked_post', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained(table: 'users', column: 'user_id')->cascadeOnDelete();
+            $table->foreignId('post_id')->constrained(table: 'posts', column: 'post_id')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comment_replies');
+        Schema::dropIfExists('user_liked_post');
     }
 };
