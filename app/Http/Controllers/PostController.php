@@ -23,7 +23,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create', [
+            'posts' => Post::all(),
+        ]);
     }
 
     /**
@@ -31,7 +33,18 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'description' => 'required|max:255',
+            'body' => 'required'
+        ]);
+
+        if ($request->file('images')) {
+            $validatedData['images'] = $request->file('images')->store('post-images');
+        }
+
+        $validatedData['user_id'] = auth()->user()->id;
+
+        Post::create($validatedData);
     }
 
     /**

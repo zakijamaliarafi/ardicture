@@ -8,4 +8,4 @@ Route::get('/', function () {
 });
 
 Route::resource('posts', PostController::class)
-    ->only(['index', 'store', 'edit', 'update']);
+    ->only(['index', 'create', 'store', 'edit', 'update']);

@@ -1,3 +1,23 @@
 @include('layouts.navbar')
 
-<h1>Test</h1>
+<h1>POSTS (Deskripsi)</h1>
+@php
+    $i = 1;
+@endphp
+@foreach ($posts as $post)
+    <div>
+        <p>{{ $i }}</p>
+        <p>Likes: 
+            @if ($post->likes_count == null)
+                0
+            @else
+                {{ $post->likes_count }}
+            @endif
+        </p>
+        <p>Rate: {{ $post->rate }}</p>
+        <p>{{ $post->description }}</p>
+    </div>
+    @php
+        $i++;
+    @endphp 
+@endforeach
