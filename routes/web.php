@@ -31,6 +31,14 @@ Route::post('/users/authenticate', [UserController::class, 'authenticate']);
 Route::get('/profile', [UserController::class, 'profile'])
 ->middleware('auth');
 
+// Show Profile Edit Form
+Route::get('/profile/edit', [UserController::class, 'edit'])
+->middleware('auth');
+
+// Update Profile
+Route::put('/profile/update', [UserController::class, 'update'])
+->middleware('auth');
+
 // Show Admin Dashboard
 Route::get('/dashboard', [AdminController::class, 'dashboard'])
 ->middleware(CheckAdmin::class);
