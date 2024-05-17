@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tags', function (Blueprint $table) {
-            $table->id('tag_id');
+            $table->id();
             $table->string('tag');
-            $table->integer('rate')->nullable();
             $table->timestamps();
         });
     }
