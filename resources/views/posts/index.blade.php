@@ -15,6 +15,7 @@
             @endif
         </p>
         <p>Rate: {{ $post->rate }}</p>
+        <a href="/posts/{{ $post->post_id }}/">View Details</a>
         <p>{{ $post->description }}</p>
     </div>
     @php
