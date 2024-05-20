@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Image;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,8 +14,10 @@ class PostController extends Controller
      */
     public function index()
     {
+
         return view('posts.index', [
             'posts' => Post::all(),
+            'images' => Image::all(),
         ]);
     }
 
@@ -23,9 +26,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view('posts.create', [
-            'posts' => Post::all(),
-        ]);
+        return view('posts.create', []);
     }
 
     /**
@@ -35,24 +36,36 @@ class PostController extends Controller
     {
         $validatedData = $request->validate([
             'description' => 'required|max:255',
-            'body' => 'required'
         ]);
 
+        //$validatedData['user_id'] = auth()->user()->id;
+        $validatedData['user_id'] = 1;
+
+        $post = Post::create($validatedData);
+
         if ($request->file('images')) {
-            $validatedData['images'] = $request->file('images')->store('post-images');
+
+
+            foreach ($request->file('images') as $image) {
+                $imagePath = $image->store('public/post-images');
+                $validated_image['image'] = 'storage/' . $imagePath;
+                $validated_image['post_id'] = $post->id;
+                $validated_image['order'] = 1;
+                Image::create($validated_image);
+            }
         }
-
-        $validatedData['user_id'] = auth()->user()->id;
-
-        Post::create($validatedData);
+        return redirect()->route('posts.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($post)
     {
-        //
+        $post = Post::where('post_id', $post)->first();
+        return view('posts.detail', [
+            'post' => $post
+        ]);
     }
 
     /**

@@ -1,11 +1,15 @@
 <x-app-layout>
     <div>
-        <form method="post" action="posts" enctype="multipart/form-data">
+        <form method="post" action="{{ route('posts.store') }}" enctype="multipart/form-data">
             @csrf
+
+            
             <div class="mb-3">
-                <label for="images" class="form-label">Upload Image</label>
-                <img src="" alt="" class="img-preview img-fluid mb-3 col-sm-5">
-                <input class="form-control @error('images') is-invalid @enderror" type="file" id="images" name="images" onchange="previewImage()">
+                <label for="images" class="form-label">Upload Images</label>
+                <div id="image-preview-wrapper" class="mb-3">
+                    <img src="" alt="" class="img-preview img-fluid mb-3 col-sm-5">
+                </div>
+                <input class="form-control @error('images') is-invalid @enderror" type="file" id="images" name="images[]" onchange="previewImages();" multiple>
                 @error('images')
                     <div class="invalid-feedback">
                         {{ $message }}
@@ -23,6 +27,7 @@
                 @enderror
 
             </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>  
 </x-app-layout>
