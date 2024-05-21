@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Post;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Image;
 use Illuminate\Database\Seeder;
@@ -19,6 +20,11 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
         DB::table('users')->insert([
             'name' => 'Admin 1',
             'username' => 'admin1',
@@ -26,7 +32,19 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin'
         ]);
 
+        DB::table('users')->insert([
+            'name' => 'Admin 2',
+            'username' => 'admin2',
+            'password' => Hash::make('1234'),
+            'role' => 'admin'
+        ]);
 
+        DB::table('users')->insert([
+            'name' => 'Admin 3',
+            'username' => 'admin3',
+            'password' => Hash::make('1234'),
+            'role' => 'admin'
+        ]);
 
         Post::factory(15)->create();
         Image::factory(15)->create();
