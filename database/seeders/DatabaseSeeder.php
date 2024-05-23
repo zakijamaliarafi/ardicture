@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Post;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Str;
+use App\Models\User;
+use App\Models\Image;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -43,5 +45,8 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('1234'),
             'role' => 'admin'
         ]);
+
+        // Post::factory(15)->create();
+        // Image::factory(15)->create();
     }
 }
