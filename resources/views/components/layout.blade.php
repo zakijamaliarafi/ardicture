@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     @vite('resources/css/app.css')
+    @vite(['resources/js/app.js'])
     <title>Ardicture</title>
 </head>
 <body>
@@ -17,13 +18,15 @@
                 <img class="h-10" src="{{asset('images/Ardicture-icon.png')}}" alt="">
                 <img src="" alt="">
             </a>
-            <a href="/search" class="my-auto mx-2">Search</a>
-            <a href="/about" class="my-auto mx-2">About</a>
+            <a class="my-auto mx-2" href="/search">Search</a>
+            <a class="my-auto mx-2" href="/about">About</a>
         </div>
         <div class="flex">
             @if(Auth::check())
-            <a href="/profile" class="flex">
-                <img class="h-10" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
+            <a class="flex" href="/profile">
+                <div class="w-6 h-6 rounded-full overflow-hidden">
+                    <img class="w-full h-full object-cover" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
+                </div>
                 <p class="my-auto mx-2">{{Auth::user()->username}}</p>
             </a>
             <div class="my-auto mx-2">
@@ -35,8 +38,8 @@
                 </form>
             </div>
             @else
-            <a href="/login" class="my-auto mx-2">Login</a>
-            <a href="/register" class="my-auto mx-2">Sign Up</a>
+            <a class="my-auto mx-2" href="/login">Login</a>
+            <a class="my-auto mx-2" href="/register">Sign Up</a>
             @endif
             {{-- @if(Auth::check() && Auth::user()->role === 'admin')
             <li>

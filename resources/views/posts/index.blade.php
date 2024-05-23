@@ -10,7 +10,7 @@
         <p>{{ $i }}</p>
         <div>
             @foreach ($images as $image)
-                @if ($image->post_id == $post->post_id)
+                @if ($image->post_id == $post->id)
                     @if (Str::startsWith($image->image, 'http'))
                         <img src="{{ $image->image }}" alt="Image {{ $i }}" width="20%" height="20%">
                     @else
@@ -28,7 +28,7 @@
                 @endif
             </p>
             <p>Rate: {{ $post->rate }}</p>
-            <a href="{{ route('posts.show', ['post' => $post->post_id]) }}">View Details</a>
+            <a href="{{ route('posts.show', ['post' => $post->id]) }}">View Details</a>
             <p>{{ $post->description }}</p>
         </div>
         @php

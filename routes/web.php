@@ -6,6 +6,7 @@ use App\Http\Controllers\PostDetailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckAdmin;
+use App\Models\Post;
 
 // Show Homepage
 Route::get('/', function () {
@@ -29,6 +30,10 @@ Route::get('/login', [UserController::class, 'login'])
 // Log In User
 Route::post('/users/authenticate', [UserController::class, 'authenticate']);
 
+// Show User by Id
+Route::get('/users/{user}', [UserController::class, 'profile'])
+->name('users.profile');
+
 // Show Profile Page
 Route::get('/profile', [UserController::class, 'profile'])
 ->middleware('auth');
@@ -45,4 +50,28 @@ Route::put('/profile/update', [UserController::class, 'update'])
 Route::get('/dashboard', [AdminController::class, 'dashboard'])
 ->middleware(CheckAdmin::class);
 
-Route::resource('posts', PostController::class);
+// Route::resource('posts', PostController::class);
+
+// Show Create Post Form
+Route::get('/posts/create', [PostController::class, 'create'])
+->middleware('auth');
+
+// Create New Post
+Route::post('/posts/store', [PostController::class, 'store'])
+->middleware('auth');
+
+// Show Edit Form
+Route::get('/posts/{post}/edit', [PostController::class, 'edit'])
+->middleware('auth');
+
+// Update Post
+Route::put('/posts/{post}', [PostController::class, 'update'])
+->middleware('auth');
+
+// Delete Listing
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])
+->middleware('auth');
+
+// Show Post Detail
+Route::get('/posts/{post}', [PostController::class, 'show'])
+->name('posts.show');
