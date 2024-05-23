@@ -9,15 +9,23 @@ class Post extends Model
 {
     use HasFactory;
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function images() {
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
+    }
+
+    public function images()
+    {
         return $this->hasMany(Image::class, 'post_id');
     }
 
-    public static function countPostsByUserId($userId) {
+    public static function countPostsByUserId($userId)
+    {
         return self::where('user_id', $userId)->count();
     }
 }

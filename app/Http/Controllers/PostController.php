@@ -39,7 +39,7 @@ class PostController extends Controller
         ]);
 
         //$validatedData['user_id'] = auth()->user()->id;
-        $validatedData['user_id'] = 1;
+        $validatedData['id'] = 1;
 
         $post = Post::create($validatedData);
 
@@ -49,7 +49,7 @@ class PostController extends Controller
             foreach ($request->file('images') as $image) {
                 $imagePath = $image->store('public/post-images');
                 $validated_image['image'] = 'storage/' . $imagePath;
-                $validated_image['post_id'] = $post->id;
+                $validated_image['id'] = $post->id;
                 $validated_image['order'] = 1;
                 Image::create($validated_image);
             }
@@ -62,7 +62,7 @@ class PostController extends Controller
      */
     public function show($post)
     {
-        $post = Post::where('post_id', $post)->first();
+        $post = Post::where('id', $post)->first();
         return view('posts.detail', [
             'post' => $post
         ]);
