@@ -7,87 +7,76 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     @vite('resources/css/app.css')
     <title>Ardicture</title>
+
 </head>
 
 <body @if (request()->is('login') || request()->is('register') || request()->is('/')) style="background-image: url({{ asset('images/Background.jpg') }});" @endif
     class="bg-center bg-cover">
-    <nav class="bg-white h-16 flex justify-between items-center">
-        <div class="flex">
-            <div class="flex">
-                <img class="h-6 my-auto mx-8" src="{{ asset('images/SideBarAction.png') }}" alt="">
+    <div class="">
+        <div
+            class="bg-white  fixed w-16 h-12 justify-between items-center text-center transition-width duration-300 flex-col">
+            <div class="h-16">
+                <button onclick="toggle()" class="">
+                    <img class="h-6 mx-auto my-5" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
+                </button>
             </div>
-            <a href="/">
-                <img class="h-10" src="{{ asset('images/Ardicture-icon.png') }}" alt="">
-                <img src="" alt="">
-            </a>
-            <a href="/search" class="my-auto mx-2">Search</a>
-            <a href="/about" class="my-auto mx-2">About</a>
-        </div>
-        <div class="flex">
-            @if (Auth::check())
-                <a href="/profile" class="flex">
-                    <img class="h-10"
-                        src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
-                        alt="">
-                    <p class="my-auto mx-2">{{ Auth::user()->username }}</p>
-                </a>
-                <div class="my-auto mx-2">
-                    <form method="POST" action="/logout">
-                        @csrf
-                        <button type="submit">
-                            <i></i>Logout
-                        </button>
-                    </form>
-                </div>
-            @else
-                <a href="/login" class="my-auto mx-2">Login</a>
-                <a href="/register" class="my-auto mx-2">Sign Up</a>
-            @endif
-            {{-- @if (Auth::check() && Auth::user()->role === 'admin')
-            <li>
-                <a href="/dashboard">Dashboard</a>
-            </li>
-            <li>
-                <a href="/profile">Profile</a>
-            </li>
-            <li>
-                <form method="POST" action="/logout">
-                    @csrf
-                    <button type="submit">
-                        <i></i>Logout
-                    </button>
-                </form>
-            </li>
-            @elseif(Auth::check() && Auth::user()->role === 'user')
-            <li>
-                <a href="/profile">Profile</a>
-            </li>
-            <li>
-                <form method="POST" action="/logout">
-                    @csrf
-                    <button type="submit">
-                        <i></i>Logout
-                    </button>
-                </form>
-            </li>
-            @else
-            <li>
-                <a href="/login">Login</a>
-            </li>
-            <li>
-                <a href="/register">Sign Up</a>
-            </li>
-            @endif --}}
-        </div>
-    </nav>
+            <div id="sidebar" class="transition-all duration-300">
+                <img class="h-6 mx-auto mt-5 mb-8" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
+                <img class="h-6 mx-auto mt-5 mb-8" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
+                <img class="h-6 mx-auto mt-5 mb-8" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
+            </div>
 
-    <main>
-        {{ $slot }}
-    </main>
+        </div>
+        <div class=""> <!-- Adjusted margin-left -->
+            <nav class="bg-white h-16 flex justify-between items-center px-4 ms-16">
+                <a href="/" class="flex items-center">
+                    <img class="h-10 mr-2" src="{{ asset('images/Ardicture-icon.png') }}" alt="Ardicture Logo">
+                    <span class="text-xl font-bold">Ardicture</span>
+                </a>
+                <div class="flex items-center">
+                    <a href="/search" class="mx-2">Search</a>
+                    <a href="/about" class="mx-2">About</a>
+                    @if (Auth::check())
+                        <a href="/profile" class="flex mx-2">
+                            <img class="h-8 mr-1"
+                                src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
+                                alt="User Profile">
+                            <span>{{ Auth::user()->username }}</span>
+                        </a>
+                        <form method="POST" action="/logout" class="mx-2">
+                            @csrf
+                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Logout</button>
+                        </form>
+                    @else
+                        <a href="/login" class="mx-2">Login</a>
+                        <a href="/register" class="mx-2">Sign Up</a>
+                    @endif
+                </div>
+            </nav>
+            <main id="content" class="ms-14">
+                {{ $slot }}
+            </main>
+        </div>
+    </div>
 
     <footer>
 
     </footer>
 </body>
+<script>
+    function toggle() {
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        if (sidebar.classList.contains('hidden')) {
+            sidebar.classList.remove('hidden');
+            sidebar.classList.add('block');
+            content.classList.add('ms-14');
+        } else {
+            sidebar.classList.remove('block');
+            sidebar.classList.add('hidden');
+            content.classList.remove('ms-14');
+        }
+    }
+</script>
 
 </html>

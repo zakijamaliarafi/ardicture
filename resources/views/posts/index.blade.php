@@ -1,10 +1,11 @@
 <x-layout>
 
-    <h1>POSTS (Deskripsi)</h1>
+
     @php
         $i = 1;
     @endphp
-    <div class="container">
+    <div class="container mx-6 my-6">
+        <h1>POSTS (Deskripsi)</h1>
         @foreach ($posts as $post)
             <p>{{ $i }}</p>
             <div>
