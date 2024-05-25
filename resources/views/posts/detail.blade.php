@@ -50,19 +50,20 @@
     </div>
     <div class="mx-24 flex">
         <div class="w-3/5">
-            <!-- add favorite and action button container -->
+            <!-- like button and action button container -->
             <div class="flex justify-between">
-                <a href="/favorites">Add to Favorites</a>
+                <a href="/likes">Harusnya tombol like</a>
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="focus:outline-none">
                         <img class="w-10" src="{{asset('images/TripleDotAction.png')}}" alt="">
                     </button>
+                    @if (Auth::check())
                     <ul
                         x-show="open"
                         @click.away="open = false"
                         class="absolute right-0 w-48 py-2 mt-2 bg-white rounded-lg shadow-xl"
                     >
-                        @if (Auth::check() && Auth::user()->id == $user->id)
+                        @if (Auth::user()->id == $user->id)
                             <li>
                                 <a href="/posts/{{$post->id}}/edit" 
                                 class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white"
@@ -77,7 +78,7 @@
                                     </button>
                                 </form>
                             </li>
-                        @elseif (Auth::check() && Auth::user()->role === 'admin')
+                        @elseif (Auth::user()->role === 'admin')
                             <li>
                                 <form method="POST" action="/posts/{{$post->id}}" onsubmit="return confirm('Are you sure you want to delete this post?');">
                                     @csrf
@@ -87,7 +88,7 @@
                                     </button>
                                 </form>
                             </li>
-                        @elseif (Auth::check())
+                        @else
                             <li>
                                 <a href="/report" 
                                 class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white"
@@ -95,6 +96,7 @@
                             </li>
                         @endif
                     </ul>
+                    @endif
                 </div>
             </div>
             <!-- post detail -->
@@ -109,12 +111,84 @@
                     </div>
                 </a>
             </div>
+            <!-- Display tags -->
+            <div class="flex gap-2" x-data="tagList({{ json_encode($tags) }})" id="tag-list">
+                <template x-for="tag in tags" :key="tag.id">
+                    <a class="bg-gray-200 rounded p-1 mr-2 my-2" :href="'/tags/' + tag.tag" x-text="formatTag(tag.tag)"></a>
+                </template>
+            </div>
+            <!-- Add Tag -->
+            @if (Auth::check() && (Auth::user()->id == $user->id || Auth::user()->role === 'admin'))
+            <div x-data="addTag({{ $post->id }})">
+                <form @submit.prevent="sendData">
+                    @csrf
+                    <div class="flex">
+                        <button type="submit">Add Tag</button>
+                        <input type="text" x-model="tag" required>
+                    </div>
+                </form>
+                <div x-text="message"></div>
+            </div>
+            @endif
         </div>
         <div class="w-2/5">
         </div>
     </div>
     
+    <script>
+        function tagList(initialTags) {
+            return {
+                tags: initialTags,
+                init() {
+                    this.$el.addEventListener('tag-added', event => {
+                        this.addTag(event.detail);
+                    });
+                },
+                formatTag(tag) {
+                    return tag.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                },
+                addTag(tag) {
+                    this.tags.push(tag.tag);
+                }
+            }
+        }
     
-
-    
+        function addTag(postId) {
+            return {
+                tag: '',
+                postId: postId,
+                message: '',
+                sendData() {
+                    console.log('Sending data:', this.tag, this.postId);
+                    fetch('/tags/store', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                        },
+                        body: JSON.stringify({ tag: this.tag, post_id: this.postId })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            this.tag = '';
+                            document.querySelector('#tag-list').dispatchEvent(new CustomEvent('tag-added', { detail: data }));
+                            this.message = data.message;
+                        } else {
+                            this.message = data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.message = 'An error occurred.';
+                    });
+                }
+            }
+        }
+    </script>            
 </x-layout>

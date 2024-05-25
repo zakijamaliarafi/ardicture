@@ -3,63 +3,67 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
+use App\Models\PostTag;
 use Illuminate\Http\Request;
 
 class TagController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('tags.create', []);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+
+    public function store(Request $request){
+        // Modify the tag value before validation
+        $request->merge([
+            'tag' => strtolower(str_replace(' ', '_', $request->input('tag')))
+        ]);
+
+        // Validate the modified data
+        $validated = $request->validate([
+            'tag' => 'required|max:255',
+            'post_id' => 'required|integer|exists:posts,id',
+        ]);
+
+        $tag = Tag::findOrCreate($request->tag);
+
+        // Check if the record already exists
+        $exists = PostTag::where('post_id', $validated['post_id'])
+                         ->where('tag_id', $tag->id)
+                         ->exists();
+
+        if ($exists) {
+            return response()->json(['success' => false, 'message' => 'Tag already exists']);
+        }
+
+        // Create the new record
+        $postTag = new PostTag;
+        $postTag->post_id = $validated['post_id'];
+        $postTag->tag_id = $tag->id;
+        $postTag->save();
+
+        return response()->json(['success' => true, 'message' => 'Tag added successfully', 'tag' => $tag], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Tag $tag)
-    {
-        //
-    }
+    public function show($tagName) {
+        $tag = Tag::where('tag', $tagName)->first();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Tag $tag)
-    {
-        //
-    }
+        if (!$tag) {
+            // If the tag doesn't exist, return a 404 response
+            abort(404, 'Tag not found');
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Tag $tag)
-    {
-        //
-    }
+        $posts = $tag->posts()->with('user')->orderBy('created_at', 'desc')->paginate(20);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Tag $tag)
-    {
-        //
+        foreach ($posts as $post) {
+            $user = $post->user;
+            $post->userId = $user->id;
+            $post->username = $user->username;
+            $post->profile = $user->user_profile;
+            $post->image = optional($post->images()->first())->image;
+        }
+
+        return view('posts.index', ['posts' => $posts, 'tag' => $tag]);
     }
 }

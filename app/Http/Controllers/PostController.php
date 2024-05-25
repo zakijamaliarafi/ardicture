@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Image;
+use App\Models\PostTag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -16,10 +18,20 @@ class PostController extends Controller
      */
     public function index()
     {
+        $tags = array('All', 'Anime', 'Art', 'Poster', 'Wallpaper');
+        $posts = Post::getPosts(20);
+        $animePosts = Post::getPostsByTag('anime');
+        $artPosts = Post::getPostsByTag('art');
+        $posterPosts = Post::getPostsByTag('poster');
+        $wallpaperPosts = Post::getPostsByTag('wallpaper'); 
 
-        return view('posts.index', [
-            'posts' => Post::all(),
-            'images' => Image::all(),
+        return view('index', [
+            'posts' => $posts,
+            'animePosts' => $animePosts,
+            'artPosts' => $artPosts,
+            'posterPosts' => $posterPosts,
+            'wallpaperPosts' => $wallpaperPosts,
+            'tags' => $tags
         ]);
     }
 
@@ -48,6 +60,7 @@ class PostController extends Controller
 
         $post = Post::create($validatedData);
 
+        // Store Images
         if ($request->file('images')) {
             $order = 1;
             foreach ($request->file('images') as $image) {
@@ -58,6 +71,18 @@ class PostController extends Controller
                 Image::create($validated_image);
             }
         }
+
+        // Store Tags
+        $tags = $request->input('tags');
+        $tagsArray = explode(',', $tags);
+        foreach ($tagsArray as $newTag) {
+            $tag = Tag::findOrCreate(strtolower(str_replace(' ', '_', $newTag)));
+            $postTag = new PostTag;
+            $postTag->post_id = $post->id;
+            $postTag->tag_id = $tag->id;
+            $postTag->save();
+        }
+
         // return redirect()->route('posts.index');
         return redirect()->route('posts.show', ['post' => $post->id]);
     }
@@ -78,6 +103,7 @@ class PostController extends Controller
         });
 
         $user = $post->user;
+        $tags = $post->tags()->orderBy('tag', 'asc')->get();
 
         $morePostsByUser = Post::getMorePostsByuser($user->id);
 
@@ -87,6 +113,7 @@ class PostController extends Controller
             'post' => $post,
             'images' => $images,
             'user' => $user,
+            'tags' => $tags,
             'morePosts' => $morePostsByUser,
             'randomPosts' => $randomPost
         ]);
@@ -102,7 +129,15 @@ class PostController extends Controller
             abort(403, 'Unauthorized Action');
         }
 
-        return view('posts.edit', ['post' => $post]);
+        $orderedTags = $post->tags()->orderBy('tag', 'asc')->get();
+        $tags = $orderedTags->pluck('tag')->map(function ($tag) {
+            return ucfirst(str_replace('_', ' ', $tag));
+        });
+
+        return view('posts.edit', [
+            'post' => $post,
+            'tags' => $tags,
+        ]);
     }
 
     /**
@@ -120,6 +155,35 @@ class PostController extends Controller
         ]);
 
         $post->update($validatedData);
+
+        // Get the new tags from the request and process them
+        $newTags = collect(explode(',', $request->input('tags')))->map(function ($tag) {
+            return strtolower(str_replace(' ', '_', $tag));
+        })->unique();
+
+        // Get the existing tags from the database
+        $existingTags = $post->tags->pluck('tag');
+
+        // Determine tags to add and tags to remove
+        $tagsToAdd = $newTags->diff($existingTags);
+        $tagsToRemove = $existingTags->diff($newTags);
+
+        // Add new tags
+        foreach ($tagsToAdd as $newTag) {
+            $tag = Tag::findOrCreate(strtolower(str_replace(' ', '_', $newTag)));
+            $postTag = new PostTag;
+            $postTag->post_id = $post->id;
+            $postTag->tag_id = $tag->id;
+            $postTag->save();
+        }
+
+        // Remove old tags
+        foreach ($tagsToRemove as $oldTag) {
+            $tag = Tag::where('tag', $oldTag)->first();
+            if ($tag) {
+                $post->tags()->detach($tag->id);
+            }
+        }
 
         return redirect()->route('posts.show', ['post' => $post->id]);
     }
