@@ -29,7 +29,7 @@
                     @endif
                 </p>
                 <p>Rate: {{ $post->rate }}</p>
-                <a href="{{ route('posts.show', ['post' => $post->id]) }}">View Details</a>
+                <a href="{{ route('posts.show', $post->id) }}">View Details</a>
                 <p>{{ $post->description }}</p>
             </div>
             @php

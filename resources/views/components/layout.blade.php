@@ -12,52 +12,65 @@
 
 <body @if (request()->is('login') || request()->is('register') || request()->is('/')) style="background-image: url({{ asset('images/Background.jpg') }});" @endif
     class="bg-center bg-cover">
-    <div class="">
-        <div
-            class="bg-white  fixed w-16 h-12 justify-between items-center text-center transition-width duration-300 flex-col">
-            <div class="h-16">
-                <button onclick="toggle()" class="">
-                    <img class="h-6 mx-auto my-5" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
-                </button>
-            </div>
-            <div id="sidebar" class="transition-all duration-300">
-                <img class="h-6 mx-auto mt-5 mb-8" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
-                <img class="h-6 mx-auto mt-5 mb-8" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
-                <img class="h-6 mx-auto mt-5 mb-8" src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action">
-            </div>
 
-        </div>
-        <div class=""> <!-- Adjusted margin-left -->
-            <nav class="bg-white h-16 flex justify-between items-center px-4 ms-16">
-                <a href="/" class="flex items-center">
-                    <img class="h-10 mr-2" src="{{ asset('images/Ardicture-icon.png') }}" alt="Ardicture Logo">
-                    <span class="text-xl font-bold">Ardicture</span>
+    <nav class="bg-white h-16 flex items-center py-4">
+        <button onclick="toggle()" class="w-16 place-self-center">
+            <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto my-5">
+        </button>
+        <a href="/" class="flex items-center ml-6">
+            <img class="h-10 mr-2" src="{{ asset('images/Ardicture-icon.png') }}" alt="Ardicture Logo">
+            <span class="text-xl font-bold">Ardicture</span>
+        </a>
+        <div class="flex items-center">
+            <a href="/search" class="mx-2">Search</a>
+            <a href="/about" class="mx-2">About</a>
+            @if (Auth::check())
+                <a href="/profile" class="flex mx-2">
+                    <img class="h-8 mr-1"
+                        src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
+                        alt="User Profile">
+                    <span>{{ Auth::user()->username }}</span>
                 </a>
-                <div class="flex items-center">
-                    <a href="/search" class="mx-2">Search</a>
-                    <a href="/about" class="mx-2">About</a>
-                    @if (Auth::check())
-                        <a href="/profile" class="flex mx-2">
-                            <img class="h-8 mr-1"
-                                src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
-                                alt="User Profile">
-                            <span>{{ Auth::user()->username }}</span>
-                        </a>
-                        <form method="POST" action="/logout" class="mx-2">
-                            @csrf
-                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Logout</button>
-                        </form>
-                    @else
-                        <a href="/login" class="mx-2">Login</a>
-                        <a href="/register" class="mx-2">Sign Up</a>
-                    @endif
-                </div>
-            </nav>
-            <main id="content" class="ms-14">
-                {{ $slot }}
-            </main>
+                <form method="POST" action="/logout" class="mx-2">
+                    @csrf
+                    <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Logout</button>
+                </form>
+            @else
+                <a href="/login" class="mx-2">Login</a>
+                <a href="/register" class="mx-2">Sign Up</a>
+            @endif
         </div>
-    </div>
+    </nav>
+    <main id="content" class="flex h-screen">
+        <div id="sidebar" class="bg-slate-400 duration-300 w-16 overflow-hidden">
+            <div class="w-72 bg-red-100 flex py-6">
+                <div class="w-16">
+                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+                <div class="w-48">
+                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+            </div>
+            <div class="w-72 bg-red-100 flex py-6">
+                <div class="w-16">
+                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+                <div class="w-48">
+                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+            </div>
+            <div class="w-72 bg-red-100 flex py-6">
+                <div class="w-16">
+                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+                <div class="w-48">
+                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+            </div>
+        </div>
+        <div class="w-3/4">{{ $slot }}</div>
+    </main>
+
 
     <footer>
 
@@ -65,16 +78,13 @@
 </body>
 <script>
     function toggle() {
-        const sidebar = document.getElementById('sidebar');
-        const content = document.getElementById('content');
-        if (sidebar.classList.contains('hidden')) {
-            sidebar.classList.remove('hidden');
-            sidebar.classList.add('block');
-            content.classList.add('ms-14');
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('w-16')) {
+            sidebar.classList.toggle('w-16');
+            sidebar.classList.toggle('w-72');
         } else {
-            sidebar.classList.remove('block');
-            sidebar.classList.add('hidden');
-            content.classList.remove('ms-14');
+            sidebar.classList.toggle('w-72');
+            sidebar.classList.toggle('w-16');
         }
     }
 </script>

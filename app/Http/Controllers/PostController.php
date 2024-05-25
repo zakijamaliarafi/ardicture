@@ -60,9 +60,9 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($post)
+    public function show($id)
     {
-        $post = Post::where('id', $post)->first();
+        $post = Post::where('id', $id)->first();
         return view('posts.detail', [
             'post' => $post
         ]);
@@ -87,8 +87,10 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        //
+        $post = Post::where('id', $id)->first();
+        $post->delete();
+        return redirect()->route('reports.index');
     }
 }
