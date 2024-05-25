@@ -1,17 +1,16 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\PostController;
-use App\Http\Controllers\PostDetailController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Middleware\CheckAdmin;
 use App\Models\Post;
+use App\Http\Middleware\CheckAdmin;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PostDetailController;
 
 // Show Homepage
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', [PostController::class, 'index']);
 
 // Show Register/Create Form
 Route::get('/register', [UserController::class, 'create'])
@@ -75,3 +74,9 @@ Route::delete('/posts/{post}', [PostController::class, 'destroy'])
 // Show Post Detail
 Route::get('/posts/{post}', [PostController::class, 'show'])
 ->name('posts.show');
+
+// Add New Tag
+Route::post('/tags/store', [TagController::class, 'store']);
+
+// Show Post by Tag
+Route::get('/tags/{tag}', [TagController::class, 'show']);

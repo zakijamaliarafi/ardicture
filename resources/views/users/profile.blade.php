@@ -22,9 +22,9 @@
     <div class="mx-24 my-5">
         <p>Post</p>
     </div>
-    <div class="flex justify-start flex-wrap gap-x-8 mx-24">
+    <div class="flex justify-start flex-wrap gap-x-8 gap-y-4 mx-24 mb-5">
         @foreach($userPosts as $post)
-        <x-post-card :post="$post" />
-    @endforeach
+            <x-post-card :post="$post" />
+        @endforeach
     </div>
 </x-layout>
