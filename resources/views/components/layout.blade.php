@@ -13,7 +13,7 @@
 <body @if (request()->is('login') || request()->is('register') || request()->is('/')) style="background-image: url({{ asset('images/Background.jpg') }});" @endif
     class="bg-center bg-cover">
 
-    <nav class="bg-white h-16 flex items-center py-4">
+    <nav class="bg-white h-16 flex items-center py-4 fixed">
         <button onclick="toggle()" class="w-16 place-self-center">
             <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto my-5">
         </button>
@@ -42,7 +42,7 @@
         </div>
     </nav>
     <main id="content" class="flex h-screen">
-        <div id="sidebar" class="bg-slate-400 duration-300 w-16 overflow-hidden">
+        <div id="sidebar" class="bg-slate-400 duration-300 w-16 h-screen mt-16 overflow-hidden fixed">
             <div class="w-72 bg-red-100 flex py-6">
                 <div class="w-16">
                     <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
@@ -68,7 +68,7 @@
                 </div>
             </div>
         </div>
-        <div class="w-3/4">{{ $slot }}</div>
+        <div class="ml-16">{{ $slot }}</div>
     </main>
 
 
