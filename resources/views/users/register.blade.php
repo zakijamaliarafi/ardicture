@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="flex min-h-full flex-col justify-center px-6 py-12 my-16 lg:px-8 mx-auto w-1/4 bg-white rounded-lg">
+    <div class="flex flex-col justify-center px-6 py-12 my-16 lg:px-8 mx-auto w-72 lg:w-96 bg-white rounded-lg">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <header>
                 <img class="mx-auto h-16 w-auto " src="{{ asset('images/Ardicture-icon.png') }}" alt="">
