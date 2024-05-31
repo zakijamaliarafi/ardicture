@@ -6,7 +6,7 @@
             </header>
         </div>
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form method="POST" action="/users" class="space-y-6">
+            <form method="POST" action="/users/authenticate" class="space-y-6">
                 @csrf
 
                 <div>

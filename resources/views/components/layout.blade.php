@@ -13,17 +13,22 @@
 <body @if (request()->is('login') || request()->is('register') || request()->is('/')) style="background-image: url({{ asset('images/Background.jpg') }});" @endif
     class="bg-center bg-cover">
 
-    <nav class="bg-white h-16 flex items-center py-4 fixed w-screen">
-        <button onclick="toggle()" class="w-16 place-self-center">
+    <nav class="bg-white h-16 flex items-center py-4 fixed w-full">
+        <button onclick="toggle()" class="w-24">
             <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto my-5">
         </button>
-        <a href="/" class="flex items-center ml-6">
-            <img class="h-10 mr-2" src="{{ asset('images/Ardicture-icon.png') }}" alt="Ardicture Logo">
-            <span class="text-xl font-bold">Ardicture</span>
-        </a>
-        <div class="flex items-center">
+        <div class="w-72">
+            <a href="/" class="flex items-center ml-6">
+                <img class="h-10 mr-2" src="{{ asset('images/Ardicture-icon.png') }}" alt="Ardicture Logo">
+                <span class="text-xl font-bold">Ardicture</span>
+            </a>
+        </div>
+
+        <div class="flex">
             <a href="/search" class="mx-2">Search</a>
             <a href="/about" class="mx-2">About</a>
+        </div>
+        <div class="flex w-full justify-end">
             @if (Auth::check())
                 <a href="/profile" class="flex mx-2">
                     <img class="h-8 mr-1"

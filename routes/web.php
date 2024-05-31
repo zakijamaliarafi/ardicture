@@ -47,4 +47,6 @@ Route::get('/dashboard', [AdminController::class, 'dashboard'])
     ->middleware(CheckAdmin::class);
 
 Route::resource('posts', PostController::class);
+Route::post('/posts/{post_id}/likes', [PostController::class, 'like'])->name('posts.like');
+
 Route::resource('reports', ReportController::class);

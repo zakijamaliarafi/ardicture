@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Image;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -63,8 +64,13 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::where('id', $id)->first();
+
+        $liked = Like::where('post_id', $post->id)
+            ->where('user_id', auth()->user()->id)
+            ->exists();
         return view('posts.detail', [
-            'post' => $post
+            'post' => $post,
+            'liked' => $liked
         ]);
     }
 
@@ -92,5 +98,22 @@ class PostController extends Controller
         $post = Post::where('id', $id)->first();
         $post->delete();
         return redirect()->route('reports.index');
+    }
+
+    public function like(Request $request)
+    {
+        $user_id = auth()->user()->id;
+        $post_id = $request->post_id;
+        $liked = Like::where('post_id', $post_id)
+            ->where('user_id', $user_id);
+        if ($liked->exists()) {
+            $liked->delete();
+        } else {
+            Like::create([
+                'user_id' => $user_id,
+                'post_id' => $post_id
+            ]);
+        }
+        return redirect()->route('posts.show', $post_id);
     }
 }
