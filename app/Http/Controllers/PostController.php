@@ -64,13 +64,13 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::where('id', $id)->first();
-
-        $liked = Like::where('post_id', $post->id)
-            ->where('user_id', auth()->user()->id)
-            ->exists();
+        $like_id = Like::where('post_id', $post->id)->where('user_id', auth()->user()->id)->value('id');
+        if (!$like_id) {
+            $like_id = false;
+        }
         return view('posts.detail', [
             'post' => $post,
-            'liked' => $liked
+            'like_id' => $like_id ?? false,
         ]);
     }
 
@@ -98,22 +98,5 @@ class PostController extends Controller
         $post = Post::where('id', $id)->first();
         $post->delete();
         return redirect()->route('reports.index');
-    }
-
-    public function like(Request $request)
-    {
-        $user_id = auth()->user()->id;
-        $post_id = $request->post_id;
-        $liked = Like::where('post_id', $post_id)
-            ->where('user_id', $user_id);
-        if ($liked->exists()) {
-            $liked->delete();
-        } else {
-            Like::create([
-                'user_id' => $user_id,
-                'post_id' => $post_id
-            ]);
-        }
-        return redirect()->route('posts.show', $post_id);
     }
 }

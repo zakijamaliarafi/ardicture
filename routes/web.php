@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PostDetailController;
 
@@ -50,3 +51,6 @@ Route::resource('posts', PostController::class);
 Route::post('/posts/{post_id}/likes', [PostController::class, 'like'])->name('posts.like');
 
 Route::resource('reports', ReportController::class);
+
+Route::post('likes/toggle', [LikeController::class, 'toggle'])->name('likes.toggle');
+Route::post('likes/delete', [LikeController::class, 'destroy'])->name('likes.delete');
