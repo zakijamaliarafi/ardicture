@@ -47,8 +47,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin'
         ]);
 
-        Post::factory(15)->create();
-        Image::factory(15)->create();
-        Report::factory(5)->create();
+        // Post::factory(15)->create();
+        // Image::factory(15)->create();
     }
 }

@@ -77,16 +77,27 @@ class UserController extends Controller
     }
 
     // Profile User
-    public function profile()
-    {
-        $user = Auth::user();
-        $postCount = Post::countPostsByUserId($user->id);
-        $likedPostCount = UserLikedPost::countLikedPostsByUserId($user->id);
+    public function profile($userId = null) {
+
+        if ($userId === null) {
+            $userId = auth()->id();
+        }
+
+        $user = User::find($userId);
+
+        if ($user === null) {
+            abort(404);
+        }
+
+        $postCount = Post::countPostsByUserId($userId);
+        $likedPostCount = UserLikedPost::countLikedPostsByUserId($userId);
+        $userPosts = Post::getPostsByUserId($userId);
         return view('users.profile', [
             'user' => $user,
             'postCount' => $postCount,
             'likedPostCount' => $likedPostCount,
-        ]);
+            'userPosts' => $userPosts,
+    ]);
     }
 
     // Show Edit Form
