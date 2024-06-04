@@ -20,7 +20,7 @@ class LikeController extends Controller
             'user_id' => 'required',
         ]);
 
-        if (empty($request->like_id)) {
+        if ($request->like_id==0) {
             $like = Like::create([
                 'post_id' => $validated_data['post_id'],
                 'user_id' => $validated_data['user_id'],
@@ -28,7 +28,7 @@ class LikeController extends Controller
             return response()->json(['success' => true, 'like_id' => $like->id]);
         } else {
             Like::where('id', $request->like_id)->delete();
-            return response()->json(['success' => true, 'like_id' => null]);
+            return response()->json(['success' => true, 'like_id' => 0]);
         }
     }
 }

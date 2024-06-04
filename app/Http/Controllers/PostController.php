@@ -66,11 +66,11 @@ class PostController extends Controller
         $post = Post::where('id', $id)->first();
         $like_id = Like::where('post_id', $post->id)->where('user_id', auth()->user()->id)->value('id');
         if (!$like_id) {
-            $like_id = false;
+            $like_id = 0;
         }
         return view('posts.detail', [
             'post' => $post,
-            'like_id' => $like_id ?? false,
+            'like_id' => $like_id,
         ]);
     }
 

@@ -5,8 +5,9 @@
             <form @submit.prevent="toggle">
                 @csrf
                 <div>
-                    <button type="submit" :class="like_id ? 'bg-red-500' : 'bg-black'"
-                        class="text-white px-4 py-1 rounded-md">
+                    <button type="submit"
+                        :class="{'bg-red-500': like_id, 'bg-white': !like_id, 'text-black': !like_id, 'text-white': like_id}"
+                        class="px-4 py-1 rounded-md">
                         Likes
                     </button>
                 </div>
@@ -21,6 +22,7 @@
                 post_id: post_id,
                 user_id: user_id,
                 toggle() {
+                    console.log('Sending data:', this.like_id, this.post_id, this.user_id);
                     fetch('/likes/toggle', {
                             method: 'POST',
                             headers: {
