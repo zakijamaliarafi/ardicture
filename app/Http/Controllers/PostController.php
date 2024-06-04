@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Tag;
 use App\Models\Post;
 use App\Models\User;
@@ -93,6 +94,10 @@ class PostController extends Controller
     public function show($post)
     {
         $post = Post::with('images')->find($post);
+        $like_id = Like::where('post_id', $post->id)->where('user_id', auth()->user()->id)->value('id');
+        if (!$like_id) {
+            $like_id = 0;
+        }
 
         if ($post === null) {
             abort(404);
@@ -111,6 +116,7 @@ class PostController extends Controller
 
         return view('posts.detail', [
             'post' => $post,
+            'like_id' => $like_id,,
             'images' => $images,
             'user' => $user,
             'tags' => $tags,
@@ -218,5 +224,12 @@ class PostController extends Controller
         $post->delete();
 
         return redirect()->route('users.profile', ['user' => $userId]);
+    }
+
+    public function destroyPost($id)
+    {
+        $post = Post::where('id', $id)->first();
+        $post->delete();
+        return redirect()->route('reports.index');
     }
 }

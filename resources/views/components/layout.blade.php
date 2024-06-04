@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,84 +9,94 @@
     @vite('resources/css/app.css')
     @vite(['resources/js/app.js'])
     <title>Ardicture</title>
+
 </head>
-<body>
-    <nav class="bg-white h-16 flex justify-between items-center">
-        <div class="flex">
-            <div class="flex">
-                <img class="h-6 my-auto mx-8" src="{{asset('images/SideBarAction.png')}}" alt="">
-            </div>
-            <a href="/">
-                <img class="h-10" src="{{asset('images/Ardicture-icon.png')}}" alt="">
-                <img src="" alt="">
+
+<body @if (request()->is('login') || request()->is('register') || request()->is('/')) style="background-image: url({{ asset('images/Background.jpg') }});" @endif
+    class="bg-center bg-cover">
+
+    <nav class="bg-white h-16 flex items-center py-4 fixed w-full">
+        <button onclick="toggle()" class="w-24">
+            <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto my-5">
+        </button>
+        <div class="w-72">
+            <a href="/" class="flex items-center ml-6">
+                <img class="h-10 mr-2" src="{{ asset('images/Ardicture-icon.png') }}" alt="Ardicture Logo">
+                <span class="text-xl font-bold">Ardicture</span>
             </a>
-            <a class="my-auto mx-2" href="/search">Search</a>
-            <a class="my-auto mx-2" href="/about">About</a>
         </div>
+
         <div class="flex">
-            @if(Auth::check())
-            <a class="flex" href="/profile">
-                <div class="w-6 h-6 rounded-full overflow-hidden">
-                    <img class="w-full h-full object-cover" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
-                </div>
-                <p class="my-auto mx-2">{{Auth::user()->username}}</p>
-            </a>
-            <div class="my-auto mx-2">
-                <form method="POST" action="/logout">
+            <a href="/search" class="mx-2">Search</a>
+            <a href="/about" class="mx-2">About</a>
+        </div>
+        <div class="flex w-full justify-end">
+            @if (Auth::check())
+                <a href="/profile" class="flex mx-2">
+                    <img class="h-8 mr-1"
+                        src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
+                        alt="User Profile">
+                    <span>{{ Auth::user()->username }}</span>
+                </a>
+                <form method="POST" action="/logout" class="mx-2">
                     @csrf
-                    <button type="submit">
-                        <i></i>Logout
-                    </button>
+                    <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded">Logout</button>
                 </form>
-            </div>
             @else
-            <a class="my-auto mx-2" href="/login">Login</a>
-            <a class="my-auto mx-2" href="/register">Sign Up</a>
+                <a href="/login" class="mx-2">Login</a>
+                <a href="/register" class="mx-2">Sign Up</a>
             @endif
-            {{-- @if(Auth::check() && Auth::user()->role === 'admin')
-            <li>
-                <a href="/dashboard">Dashboard</a>
-            </li>
-            <li>
-                <a href="/profile">Profile</a>
-            </li>
-            <li>
-                <form method="POST" action="/logout">
-                    @csrf
-                    <button type="submit">
-                        <i></i>Logout
-                    </button>
-                </form>
-            </li>
-            @elseif(Auth::check() && Auth::user()->role === 'user')
-            <li>
-                <a href="/profile">Profile</a>
-            </li>
-            <li>
-                <form method="POST" action="/logout">
-                    @csrf
-                    <button type="submit">
-                        <i></i>Logout
-                    </button>
-                </form>
-            </li>
-            @else
-            <li>
-                <a href="/login">Login</a>
-            </li>
-            <li>
-                <a href="/register">Sign Up</a>
-            </li>
-            @endif --}}
         </div>
     </nav>
-
-    <main>
-        {{$slot}}
+    <main id="content" class="flex h-screen">
+        <div id="sidebar"
+            class="@if (request()->is('login') || request()->is('register') || request()->is('/')) ml-[-4rem] @endif bg-slate-400 duration-300 w-16 h-screen mt-16 overflow-hidden fixed">
+            <div class="w-72 bg-red-100 flex py-6">
+                <div class="w-16">
+                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+                <div class="w-48">
+                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+            </div>
+            <div class="w-72 bg-red-100 flex py-6">
+                <div class="w-16">
+                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+                <div class="w-48">
+                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+            </div>
+            <div class="w-72 bg-red-100 flex py-6">
+                <div class="w-16">
+                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+                <div class="w-48">
+                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                </div>
+            </div>
+        </div>
+        <div class="mt-16 @if (!request()->is('login') && !request()->is('register') && !request()->is('/')) ml-16 @endif w-full">
+            {{ $slot }}
+        </div>
     </main>
 
+
     <footer>
-        
+
     </footer>
 </body>
+<script>
+    function toggle() {
+        var sidebar = document.getElementById('sidebar');
+        if (sidebar.classList.contains('w-16')) {
+            sidebar.classList.toggle('w-16');
+            sidebar.classList.toggle('w-72');
+        } else {
+            sidebar.classList.toggle('w-72');
+            sidebar.classList.toggle('w-16');
+        }
+    }
+</script>
+
 </html>

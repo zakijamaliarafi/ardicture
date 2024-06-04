@@ -52,7 +52,18 @@
         <div class="w-3/5">
             <!-- like button and action button container -->
             <div class="flex justify-between">
-                <a href="/likes">Harusnya tombol like</a>
+                <div class="mt-3" x-data="likes({{ $like_id }}, {{ $post->id }}, {{ auth()->user()->id }})">
+                    <form @submit.prevent="toggle">
+                        @csrf
+                        <div>
+                            <button type="submit"
+                                :class="{'bg-red-500': like_id, 'bg-white': !like_id, 'text-black': !like_id, 'text-white': like_id}"
+                                class="px-4 py-1 rounded-md">
+                                Likes
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="focus:outline-none">
                         <img class="w-10" src="{{asset('images/TripleDotAction.png')}}" alt="">
@@ -187,6 +198,42 @@
                         console.error('Error:', error);
                         this.message = 'An error occurred.';
                     });
+                }
+            }
+        }
+
+        function likes(like_id, post_id, user_id) {
+            return {
+                like_id: like_id,
+                post_id: post_id,
+                user_id: user_id,
+                toggle() {
+                    console.log('Sending data:', this.like_id, this.post_id, this.user_id);
+                    fetch('/likes/toggle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                            },
+                            body: JSON.stringify({
+                                like_id: this.like_id,
+                                post_id: this.post_id,
+                                user_id: this.user_id
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            this.like_id = data.like_id;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            this.message = 'An error occurred.';
+                        });
                 }
             }
         }
