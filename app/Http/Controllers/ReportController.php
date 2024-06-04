@@ -32,9 +32,23 @@ class ReportController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function action(Request $request)
     {
-        //
+        $validated_data = $request->validate([
+            'post_id' => 'required',
+            'user_id' => 'required',
+        ]);
+
+        if ($request->report_id == 0) {
+            $report = Report::create([
+                'post_id' => $validated_data['post_id'],
+                'user_id' => $validated_data['user_id'],
+            ]);
+            return response()->json(['success' => true, 'report_id' => $report->id, 'message' => 'Report Submitted']);
+        } else {
+            Report::where('id', $request->report_id)->delete();
+            return response()->json(['success' => true, 'report_id' => 0, 'message' => 'Report Deleted']);
+        }
     }
 
     /**
@@ -42,7 +56,6 @@ class ReportController extends Controller
      */
     public function show(Report $report)
     {
-        //
     }
 
     /**
@@ -68,6 +81,10 @@ class ReportController extends Controller
     {
         $report = Report::where('id', $id)->first();
         $report->delete();
-        return redirect()->route('reports.index');
+        if (auth()->user->role == 'admin') {
+            return redirect()->route('reports.index');
+        } else {
+            return response()->json();
+        }
     }
 }

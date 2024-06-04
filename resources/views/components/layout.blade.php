@@ -14,7 +14,7 @@
 
 <body
     @if (request()->is('login') || request()->is('register')) style="background-image: url({{ asset('images/Background.jpg') }});" class="bg-center bg-cover bg-fixed" @endif>
-
+    <!------------------------------ Navbar---------------------- -->
     <nav class="bg-white h-16 flex items-center py-4 fixed w-full z-50">
         <button onclick="sidebar()" class="w-24">
             <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto my-5">
@@ -49,9 +49,12 @@
         </div>
     </nav>
     <main id="content" class="flex h-screen">
+        <!------------------------------ Sidebar ------------------------------------>
         <div id="sidebar"
             class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-slate-400 duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
+            <!------------Container Semua Konten Sidebar--------------------->
             <div class="w-72 bg-red-100 flex pt-6 h-16">
+                <!------------Container Satu Row Sidebar--------------------->
                 <div class="w-16 flex justify-center items-center">
                     <div class="w-14 content-center">
                         <a class="" href="/">

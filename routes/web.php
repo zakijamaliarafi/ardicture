@@ -54,10 +54,13 @@ Route::get('/dashboard', [AdminController::class, 'dashboard'])
 // Route::resource('posts', PostController::class);
 Route::post('/posts/{post_id}/likes', [PostController::class, 'like'])->name('posts.like');
 
-Route::resource('reports', ReportController::class);
+Route::get('/reports', [ReportController::class, 'index'])->name('reports.show');
+Route::post('/reports/action', [ReportController::class, 'action'])->name('reports.action');
+Route::post('/reports/destroy', [ReportController::class, 'index'])->name('reports.destroy');
+
+
 
 Route::post('likes/toggle', [LikeController::class, 'toggle'])->name('likes.toggle');
-Route::post('likes/delete', [LikeController::class, 'destroy'])->name('likes.delete');
 
 // Show Create Post Form
 Route::get('/posts/create', [PostController::class, 'create'])
