@@ -12,11 +12,10 @@
 
 </head>
 
-<body @if (request()->is('login') || request()->is('register') || request()->is('/')) style="background-image: url({{ asset('images/Background.jpg') }});" @endif
-    class="bg-center bg-cover">
+<body @if (request()->is('login') || request()->is('register')) style="background-image: url({{ asset('images/Background.jpg') }});" class="bg-center bg-cover bg-fixed" @endif>
 
-    <nav class="bg-white h-16 flex items-center py-4 fixed w-full">
-        <button onclick="toggle()" class="w-24">
+    <nav class="bg-white h-16 flex items-center py-4 fixed w-full z-50">
+        <button onclick="sidebar()" class="w-24">
             <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto my-5">
         </button>
         <div class="w-72">
@@ -36,7 +35,7 @@
                     <img class="h-8 mr-1"
                         src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
                         alt="User Profile">
-                    <span>{{ Auth::user()->username }}</span>
+                    <span class="mt-1">{{ Auth::user()->username }}</span>
                 </a>
                 <form method="POST" action="/logout" class="mx-2">
                     @csrf
@@ -50,7 +49,7 @@
     </nav>
     <main id="content" class="flex h-screen">
         <div id="sidebar"
-            class="@if (request()->is('login') || request()->is('register') || request()->is('/')) ml-[-4rem] @endif bg-slate-400 duration-300 w-16 h-screen mt-16 overflow-hidden fixed">
+            class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-slate-400 duration-300 w-16 h-screen mt-16 overflow-hidden fixed">
             <div class="w-72 bg-red-100 flex py-6">
                 <div class="w-16">
                     <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
@@ -87,7 +86,7 @@
     </footer>
 </body>
 <script>
-    function toggle() {
+    function sidebar() {
         var sidebar = document.getElementById('sidebar');
         if (sidebar.classList.contains('w-16')) {
             sidebar.classList.toggle('w-16');

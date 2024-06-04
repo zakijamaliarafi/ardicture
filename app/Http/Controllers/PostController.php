@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Like;
 use App\Models\Tag;
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Image;
 use App\Models\PostTag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -94,11 +95,15 @@ class PostController extends Controller
     public function show($post)
     {
         $post = Post::with('images')->find($post);
-        $like_id = Like::where('post_id', $post->id)->where('user_id', auth()->user()->id)->value('id');
-        if (!$like_id) {
-            $like_id = 0;
+        
+        $like_id = 0;
+        if(Auth::check()){
+            $like_id = Like::where('post_id', $post->id)->where('user_id', auth()->user()->id)->value('id');
+            if (!$like_id) {
+                $like_id = 0;
+            }
         }
-
+        
         if ($post === null) {
             abort(404);
         }
@@ -116,7 +121,7 @@ class PostController extends Controller
 
         return view('posts.detail', [
             'post' => $post,
-            'like_id' => $like_id,,
+            'like_id' => $like_id,
             'images' => $images,
             'user' => $user,
             'tags' => $tags,

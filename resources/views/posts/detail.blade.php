@@ -2,7 +2,7 @@
     <div class="mx-24 flex">
         <!-- Image Contaianer -->
         <div class="w-3/5 h-96 flex flex-col justify-center items-center">
-            <div class="mx-auto relative"
+            <div class="mx-auto relative z-40"
             x-data="{ activeSlide: 1, slides: {{ $images}} }">
                 <!-- Slides -->
                 <template x-for="(slide, index) in slides" :key="index">
@@ -52,6 +52,8 @@
         <div class="w-3/5">
             <!-- like button and action button container -->
             <div class="flex justify-between">
+                <!-- like button and action button container -->
+                @if (Auth::check())
                 <div class="mt-3" x-data="likes({{ $like_id }}, {{ $post->id }}, {{ auth()->user()->id }})">
                     <form @submit.prevent="toggle">
                         @csrf
@@ -64,6 +66,11 @@
                         </div>
                     </form>
                 </div>
+                @else
+                <div class="mt-3">
+                    <a href="/login" class="px-4 py-1 rounded-md bg-white text-black">Likes</a>
+                </div>
+                @endif
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="focus:outline-none">
                         <img class="w-10" src="{{asset('images/TripleDotAction.png')}}" alt="">
