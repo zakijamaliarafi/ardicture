@@ -7,6 +7,7 @@ use App\Http\Controllers\TagController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostDetailController;
 
 // Show Homepage
@@ -80,3 +81,5 @@ Route::post('/tags/store', [TagController::class, 'store']);
 
 // Show Post by Tag
 Route::get('/tags/{tag}', [TagController::class, 'show']);
+
+Route::post('/comments/store', [CommentController::class, 'store']);

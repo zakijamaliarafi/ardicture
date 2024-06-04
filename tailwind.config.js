@@ -9,6 +9,7 @@ export default {
     extend: {
       colors: {
         'white': '#ffffff',
+        'ardicture-orange': '#f14902',
       },
     },
   },

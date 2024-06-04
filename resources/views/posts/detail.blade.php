@@ -51,8 +51,8 @@
     <div class="mx-24 flex">
         <div class="w-3/5">
             <!-- like button and action button container -->
-            <div class="flex justify-between">
-                <a href="/likes">Harusnya tombol like</a>
+            <div class="flex justify-between my-2">
+                <a href="/likes"><img class="h-7" src="{{asset('images/like.png')}}" alt=""></a>
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="focus:outline-none">
                         <img class="w-10" src="{{asset('images/TripleDotAction.png')}}" alt="">
@@ -112,9 +112,12 @@
                 </a>
             </div>
             <!-- Display tags -->
+            <div class="my-1">
+                <p class="font-medium">Tags</p>
+            </div>
             <div class="flex gap-2" x-data="tagList({{ json_encode($tags) }})" id="tag-list">
                 <template x-for="tag in tags" :key="tag.id">
-                    <a class="bg-gray-200 rounded p-1 mr-2 my-2" :href="'/tags/' + tag.tag" x-text="formatTag(tag.tag)"></a>
+                    <a class="bg-gray-200 rounded p-1 mr-2" :href="'/tags/' + tag.tag" x-text="formatTag(tag.tag)"></a>
                 </template>
             </div>
             <!-- Add Tag -->
@@ -122,14 +125,53 @@
             <div x-data="addTag({{ $post->id }})">
                 <form @submit.prevent="sendData">
                     @csrf
-                    <div class="flex">
-                        <button type="submit">Add Tag</button>
-                        <input type="text" x-model="tag" required>
+                    <div class="flex my-2">
+                        <button type="submit"><img class="h-6 mr-2" src="{{asset('images/CircleAdd.png')}}" alt=""></button>
+                        <input type="text" x-model="tag" placeholder="Add Tags" required>
                     </div>
                 </form>
                 <div x-text="message"></div>
             </div>
             @endif
+            <!-- Comment Form -->
+            @if (Auth::check())
+            <div x-data="addComment({{ $post->id }})">
+                <form @submit.prevent="sendComment">
+                    @csrf
+                    <div class="flex justify-between items-center my-2">
+                        <div class="w-8 h-8 rounded-full overflow-hidden">
+                            <img class="w-full h-full object-cover" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
+                        </div>
+                        <input x-model="comment" class="border p-1 w-4/5 rounded" type="text" placeholder="Leave a comment" required></input>
+                        <button type="submit" class=" bg-ardicture-orange text-white font-extrabold px-4 py-1 rounded-2xl">Send</button>
+                    </div>
+                </form>
+                <div x-text="message" class="mt-2 text-green-500"></div>
+            </div>
+            @else
+            <div class="mt-4">
+                <p class="font-medium">Comments</p>
+            </div>
+            @endif
+            <!-- Comments Section -->
+            <div x-data="commentList({{ json_encode($comments) }})" id="comment-list">
+                <template x-for="comment in comments" :key="comment.id">
+                    <div class="flex my-2">
+                        <a :href="'/users/' + comment.user.id">
+                            <div class="w-8 h-8 mt-1 mr-4 rounded-full overflow-hidden">
+                                <img class="w-full h-full object-cover" :src="comment.user.user_profile ? `/storage/${comment.user.user_profile}` : '/images/user.png'" :alt="comment.user.username">
+                            </div>
+                        </a>
+                        <div>
+                            <a :href="'/users/' + comment.user.id">
+                                <p class="font-medium" x-text="comment.user.username"></p>
+                            </a>
+                            <p x-text="comment.comment"></p>
+                            <p class="text-sm text-gray-500" x-text="new Date(comment.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
         </div>
         <div class="w-2/5">
         </div>
@@ -190,5 +232,58 @@
                 }
             }
         }
+
+        function commentList(initialComments) {
+            return {
+                comments: initialComments,
+                init() {
+                    this.$el.addEventListener('comment-added', event => {
+                        this.addComment(event.detail);
+                    });
+                },
+                addComment(comment) {
+                    this.comments.push(comment.comment);
+                }
+            }
+        }
+
+        function addComment(postId) {
+            return {
+                comment: '',
+                postId: postId,
+                message: '',
+                sendComment() {
+                    console.log('Sending comment:', this.comment, this.postId);
+                    fetch('/comments/store', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                        },
+                        body: JSON.stringify({ comment: this.comment, post_id: this.postId })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            this.comment = '';
+                            document.querySelector('#comment-list').dispatchEvent(new CustomEvent('comment-added', { detail: data }));
+                            this.message = data.message;
+                        } else {
+                            this.message = data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        this.message = 'An error occurred.';
+                    });
+                }
+            }
+        }
+        
     </script>            
 </x-layout>

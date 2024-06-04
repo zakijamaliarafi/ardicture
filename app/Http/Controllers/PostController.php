@@ -92,22 +92,27 @@ class PostController extends Controller
      */
     public function show($post)
     {
-        $post = Post::with('images')->find($post);
+        // Fetch the post with its images, comments, and the user of each comment
+        $post = Post::with(['images', 'comments.user'])->find($post);
 
         if ($post === null) {
             abort(404);
         }
 
+        // Prepare the images URLs
         $images = $post->images->map(function ($image) {
-        return asset('storage/' . $image->image);
+            return asset('storage/' . $image->image);
         });
 
+        // Fetch the post's user and tags
         $user = $post->user;
         $tags = $post->tags()->orderBy('tag', 'asc')->get();
 
+        // Fetch additional posts by the same user and some random posts
         $morePostsByUser = Post::getMorePostsByuser($user->id);
-
         $randomPost = Post::getRandomPosts(4);
+
+        $comments = $post->comments;
 
         return view('posts.detail', [
             'post' => $post,
@@ -115,9 +120,11 @@ class PostController extends Controller
             'user' => $user,
             'tags' => $tags,
             'morePosts' => $morePostsByUser,
-            'randomPosts' => $randomPost
+            'randomPosts' => $randomPost,
+            'comments' => $comments
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.
