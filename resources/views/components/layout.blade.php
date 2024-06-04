@@ -118,7 +118,7 @@
                         <p class="font-sans text-xl text-left ml-4">Upload</p>
                     </a>
                 </div>
-                @if (request()->is('/posts/create'))
+                @if (url()->current() == url('/posts/create'))
                     <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
                     </div>
                     <div class="w-6">
@@ -143,7 +143,7 @@
                         <p class="font-sans text-xl text-left ml-4">Profile</p>
                     </a>
                 </div>
-                @if (request()->is('/profile'))
+                @if (url()->current() == url('/profile'))
                     <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
                     </div>
                     <div class="w-6">
