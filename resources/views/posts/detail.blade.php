@@ -1,6 +1,6 @@
 <x-layout>
     <div class="mx-24 flex">
-        <!-- Image Contaianer -->
+        <!-- Image Container -->
         <div class="w-3/5 h-96 flex flex-col justify-center items-center">
             <div class="mx-auto relative z-40" x-data="{ activeSlide: 1, slides: {{ $images }} }">
                 <!-- Slides -->
@@ -117,8 +117,9 @@
                                 </li>
                             @else
                                 <li>
-                                    <div x-data="report({{ $report_id }}, {{ $post->id }}, {{ auth()->user()->id }})">
-                                        <form @submit.prevent="report_action">
+                                    <div x-data="reports({{ $report_id }}, {{ $post->id }}, {{ auth()->user()->id }})">
+                                        <form @submit.prevent="toggle">
+                                            @csrf
                                             <button type="submit"
                                                 class="w-full block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
                                                 <span x-text="report_id ? 'Undo Report' : 'Report'"></span>
@@ -254,29 +255,75 @@
                         })
                         .then(response => {
                             if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
+                                throw new Error(`HTTP error! status: ${response.status}`)
                             }
-                            return response.json();
+                            return response.json()
                         })
                         .then(data => {
-                            this.like_id = data.like_id;
+                            this.like_id = data.like_id
+                        })
+                        .catch(error => {
+                            console.error('Error:', error)
+                            this.message = 'An error occurred.'
+                        });
+                }
+            }
+        }
+
+        /*
+        document.addEventListener('alpine:init', () => {
+
+            Alpine.data('reports', (report_id, post_id, user_id) => ({
+                report_id,
+                post_id,
+                user_id,
+                message: '',
+                toggle() {
+                    console.log('Sending data:', this.report_id, this.post_id, this.user_id);
+                    fetch('/reports/toggle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]')
+                                    .content
+                            },
+                            body: JSON.stringify({
+                                report_id: this.report_id,
+                                post_id: this.post_id,
+                                user_id: this.user_id
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.text(); // Get raw response text
+                        })
+                        .then(text => {
+                            console.log(text); // Log raw response
+                            return JSON.parse(text); // Parse the text as JSON
+                        })
+                        .then(data => {
+                            this.report_id = data.report_id;
                         })
                         .catch(error => {
                             console.error('Error:', error);
                             this.message = 'An error occurred.';
                         });
                 }
-            }
-        }
+            }));
+        });
+        */
 
-        function report(report_id, post_id, user_id) {
+
+        function reports(report_id, post_id, user_id) {
             return {
                 report_id: report_id,
                 post_id: post_id,
                 user_id: user_id,
-                report_action() {
+                toggle() {
                     console.log('Sending data:', this.report_id, this.post_id, this.user_id);
-                    fetch('/reports/action', {
+                    fetch('/reports/toggle', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -298,8 +345,8 @@
                             this.report_id = data.report_id;
                         })
                         .catch(error => {
-                            console.error('Error:', error);
-                            this.message = 'An error occurred.';
+                            console.error('Error:', error)
+                            this.message = 'An error occurred.'
                         });
                 }
             }

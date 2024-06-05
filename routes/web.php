@@ -4,10 +4,10 @@ use App\Models\Post;
 use App\Http\Middleware\CheckAdmin;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\LikeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PostDetailController;
 
@@ -55,7 +55,8 @@ Route::get('/dashboard', [AdminController::class, 'dashboard'])
 Route::post('/posts/{post_id}/likes', [PostController::class, 'like'])->name('posts.like');
 
 Route::get('/reports', [ReportController::class, 'index'])->name('reports.show');
-Route::post('/reports/action', [ReportController::class, 'action'])->name('reports.action');
+Route::post('reports/toggle', [ReportController::class, 'toggle'])->name('reports.toggle');
+//Route::post('/reports/toggle', [ReportsController::class, 'toggle'])->name('reports.toggle');
 Route::post('/reports/destroy', [ReportController::class, 'index'])->name('reports.destroy');
 
 
@@ -85,6 +86,8 @@ Route::delete('/posts/{post}', [PostController::class, 'destroy'])
 // Show Post Detail
 Route::get('/posts/{post}', [PostController::class, 'show'])
     ->name('posts.show');
+
+Route::post('/posts/destroy', [PostController::class, 'destroy'])->name('posts.destroy');
 
 // Add New Tag
 Route::post('/tags/store', [TagController::class, 'store']);
