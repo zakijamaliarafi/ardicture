@@ -4,21 +4,22 @@
             @csrf
 
             <div class="w-1/2">
-                <label for="images" class="font-bold text-3xl">Upload Images</label>
-                <div>
-                    <img src="" alt="">
-                </div>
                 <label for="images">
+                    <div x-data="preview_handler()" id="image_container"
+                        class="border-2 rounded-md border-orange-400 border-dashed h-60 content-center mt-2">
+                        <template x-for="(image, index) in images" :key="index">
+                            <img :src="image" alt="Preview Image" class="h-20 mx-auto">
+                        </template>
 
-                    <div x-data="preview_handler()"
-                        class="border-2 rounded-md border-orange-400 border-dashed  h-60 content-center mt-2">
-                        <img src="" alt="" id="preview_image">
-                        <img src="{{ asset('images/Circle-Add.png') }}" alt="Sidebar Action" id="circle_add"
-                            class="h-10 mx-auto">
-                        <p class="text-center font-bold mt-1" id="text_add">Choose your images</p>
+                        <div id="preview_placeholder">
+                            <img src="{{ asset('images/Circle-Add.png') }}" alt="Sidebar Action" id="circle_add"
+                                class="h-10 mx-auto">
+                            <p class="text-center font-bold mt-1" id="text_add">Choose your images</p>
+                        </div>
+
+                        <input type="file" id="images" name="images[]" hidden multiple @change="preview_images">
                     </div>
 
-                    <input type="file" id="images" name="images[]" hidden multiple>
                 </label>
                 <div class="flex justify-between">
                     <p class="text-slate-400">Supported formats : JPG, PNG</p>
@@ -112,21 +113,22 @@
 
 
             Alpine.data('preview_handler', () => ({
+                images: [],
                 init() {
-                    document.getElementById('images').addEventListener('change', this.previewImages);
+                    console.log('preview_handler initialized');
                 },
                 preview_images(event) {
+                    this.images = [];
                     const files = event.target.files;
-                    if (files.length > 0) {
-                        const first_image = files[0];
-                        const preview_image = document.getElementById('preview_image');
-                        const reader = new FileReader();
-
-                        reader.onload = function(e) {
-                            preview_image.src = e.target.result;
+                    if (files) {
+                        for (let i = 0; i < files.length; i++) {
+                            let reader = new FileReader();
+                            reader.onload = (e) => {
+                                this.images.push(e.target.result);
+                            }
+                            reader.readAsDataURL(files[i]);
                         }
-
-                        reader.readAsDataURL(first_image);
+                        document.getElementById('preview_placeholder').style.display = 'none';
                     }
                 }
             }));
