@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
-use App\Models\UserLikedPost;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +77,8 @@ class UserController extends Controller
     }
 
     // Profile User
-    public function profile($userId = null) {
+    public function profile($userId = null)
+    {
 
         if ($userId === null) {
             $userId = auth()->id();
@@ -90,14 +91,16 @@ class UserController extends Controller
         }
 
         $postCount = Post::countPostsByUserId($userId);
-        $likedPostCount = UserLikedPost::countLikedPostsByUserId($userId);
+        $likedPostCount = Like::where('user_id', $userId)->count();
         $userPosts = Post::getPostsByUserId($userId);
+        $likedPosts = Post::getLikedPosts($userId);
         return view('users.profile', [
             'user' => $user,
             'postCount' => $postCount,
             'likedPostCount' => $likedPostCount,
             'userPosts' => $userPosts,
-    ]);
+            'likedPosts' => $likedPosts
+        ]);
     }
 
     // Show Edit Form

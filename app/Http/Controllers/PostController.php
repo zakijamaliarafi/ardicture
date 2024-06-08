@@ -52,7 +52,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'description' => 'required|max:255',
+            'title' => 'required|max:255',
         ]);
 
         $validatedImage = $request->validate([
@@ -128,7 +128,8 @@ class PostController extends Controller
 
         $randomPost = Post::getRandomPosts(4);
 
-        return view('posts.detail', [
+
+        return response()->view('posts.detail', [
             'post' => $post,
             'like_id' => $like_id,
             'report_id' => $report_id,
@@ -172,7 +173,7 @@ class PostController extends Controller
         }
 
         $validatedData = $request->validate([
-            'description' => 'required|max:255',
+            'title' => 'required|max:255',
         ]);
 
         $post->update($validatedData);
@@ -237,6 +238,10 @@ class PostController extends Controller
 
         // Delete the post
         $post->delete();
+
+        if (auth()->user()->role == 'admin') {
+            return redirect()->route('reports.show');
+        }
 
         return redirect()->route('users.profile', ['user' => $userId]);
     }

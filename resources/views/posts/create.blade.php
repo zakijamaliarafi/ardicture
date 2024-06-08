@@ -6,10 +6,32 @@
             <div class="w-1/2">
                 <label for="images">
                     <div x-data="preview_handler()" id="image_container"
-                        class="border-2 rounded-md border-orange-400 border-dashed h-60 content-center mt-2">
+                        class="relative border-2 rounded-md border-orange-400 border-dashed h-60 content-center mt-2">
                         <template x-for="(image, index) in images" :key="index">
-                            <img :src="image" alt="Preview Image" class="h-20 mx-auto">
+                            <div x-show="active_slides === index + 1" class="w-full justify-center content-center"
+                                id="preview_image">
+                                <img :src="image" alt="Preview Image" class="h-full mx-auto">
+                            </div>
+
                         </template>
+                        <div class="absolute inset-0 flex items-center justify-between z-50" x-show="images.length > 1"
+                            id="arrow_container">
+                            <div class="flex items-center justify-start w-1/2">
+                                <button type="button"
+                                    class="text-black bg-orange-500 hover:text-orange-500 font-bold hover:shadow-lg rounded-full w-12 h-12"
+                                    x-on:click="active_slides = active_slides === 1 ? images.length : active_slides - 1">
+                                    &#8592;
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-end w-1/2">
+                                <button type="button"
+                                    class="text-black bg-orange-500 hover:text-orange-500 font-bold hover:shadow rounded-full w-12 h-12"
+                                    x-on:click="active_slides = active_slides === images.length ? 1 : active_slides + 1">
+                                    &#8594;
+                                </button>
+                            </div>
+                        </div>
+
 
                         <div id="preview_placeholder">
                             <img src="{{ asset('images/Circle-Add.png') }}" alt="Sidebar Action" id="circle_add"
@@ -33,12 +55,11 @@
             </div>
 
             <div class="mt-6">
-                <label for="description" class="font-bold text-3xl">Description</label>
+                <label for="title" class="font-bold text-3xl">Title</label>
                 <br>
-                <textarea id="description" name="description" required autofocus cols="30" rows="10"
-                    placeholder="Description...."
-                    class="block w-5/12 h-20 mt-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">{{ old('description') }}</textarea>
-                @error('description')
+                <textarea id="Title" name="title" required autofocus cols="30" rows="10" placeholder="title...."
+                    class="block w-5/12 h-20 mt-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">{{ old('title') }}</textarea>
+                @error('title')
                     <div>
                         {{ $message }}
                     </div>
@@ -114,6 +135,7 @@
 
             Alpine.data('preview_handler', () => ({
                 images: [],
+                active_slides: 1,
                 init() {
                     console.log('preview_handler initialized');
                 },
@@ -125,10 +147,16 @@
                             let reader = new FileReader();
                             reader.onload = (e) => {
                                 this.images.push(e.target.result);
+                                if (files.length > 1) {
+
+                                }
                             }
                             reader.readAsDataURL(files[i]);
                         }
                         document.getElementById('preview_placeholder').style.display = 'none';
+                        document.getElementById('image_container').classList.add('flex');
+                        document.getElementById('preview_image').classList.add('h-full');
+                        this.image.style.display = 'flex'
                     }
                 }
             }));

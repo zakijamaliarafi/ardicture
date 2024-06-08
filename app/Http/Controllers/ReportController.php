@@ -8,6 +8,7 @@ use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -43,6 +44,7 @@ class ReportController extends Controller
         $user_id = $request->input('user_id');
         $post_id = $request->input('post_id');
         $report_id = $request->input('report_id');
+        $report_description = $request->input('report_description');
 
         /*
         try {
@@ -69,11 +71,12 @@ class ReportController extends Controller
             $report = Report::create([
                 'post_id' => $validated_data['post_id'],
                 'user_id' => $validated_data['user_id'],
+                'report_description' => $report_description,
             ]);
-            return response()->json(['success' => true, 'report_id' => $report->id]);
+            return response()->json(['success' => true, 'report_id' => $report->id, 'popup_open' => true]);
         } else {
             Report::where('id', $request->report_id)->delete();
-            return response()->json(['success' => true, 'report_id' => 0]);
+            return response()->json(['success' => true, 'report_id' => 0, 'no_popup' => false]);
         }
     }
 
@@ -107,8 +110,8 @@ class ReportController extends Controller
     {
         $report = Report::where('id', $id)->first();
         $report->delete();
-        if (auth()->user->role == 'admin') {
-            return redirect()->route('reports.index');
+        if (Auth::user()->role == 'admin') {
+            return redirect()->route('reports.show');
         } else {
             return response()->json();
         }

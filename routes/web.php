@@ -57,7 +57,7 @@ Route::post('/posts/{post_id}/likes', [PostController::class, 'like'])->name('po
 Route::get('/reports', [ReportController::class, 'index'])->name('reports.show');
 Route::post('reports/toggle', [ReportController::class, 'toggle'])->name('reports.toggle');
 //Route::post('/reports/toggle', [ReportsController::class, 'toggle'])->name('reports.toggle');
-Route::post('/reports/destroy', [ReportController::class, 'index'])->name('reports.destroy');
+Route::delete('/reports/destroy/{id}', [ReportController::class, 'destroy'])->name('reports.destroy');
 
 
 
@@ -80,14 +80,14 @@ Route::put('/posts/{post}', [PostController::class, 'update'])
     ->middleware('auth');
 
 // Delete Listing
-Route::delete('/posts/{post}', [PostController::class, 'destroy'])
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy')
     ->middleware('auth');
 
 // Show Post Detail
 Route::get('/posts/{post}', [PostController::class, 'show'])
     ->name('posts.show');
 
-Route::post('/posts/destroy', [PostController::class, 'destroy'])->name('posts.destroy');
+//Route::post('/posts/destroy', [PostController::class, 'destroy'])->name();
 
 // Add New Tag
 Route::post('/tags/store', [TagController::class, 'store']);

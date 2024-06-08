@@ -9,7 +9,11 @@
     @vite('resources/css/app.css')
     @vite(['resources/js/app.js'])
     <title>Ardicture</title>
-
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body
