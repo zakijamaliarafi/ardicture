@@ -129,7 +129,7 @@ class PostController extends Controller
         $randomPost = Post::getRandomPosts(4);
 
 
-        return response()->view('posts.detail', [
+        return view('posts.detail', [
             'post' => $post,
             'like_id' => $like_id,
             'report_id' => $report_id,

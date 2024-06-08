@@ -195,8 +195,10 @@
                         <form @submit.prevent="sendData">
                             @csrf
                             <div class="flex">
-                                <button type="submit">Add Tag</button>
-                                <input type="text" x-model="tag" required>
+                                <button type="submit"><img src="{{ asset('images/Circle-Add.png') }}"
+                                        class="h-5" alt=""></button>
+                                <input class="border-hidden ml-3" placeholder="Add Tags" type="text"
+                                    x-model="tag" required>
                             </div>
                         </form>
                         <div x-text="message"></div>

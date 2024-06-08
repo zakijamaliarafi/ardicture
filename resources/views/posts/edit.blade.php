@@ -1,19 +1,19 @@
 <x-layout>
-    <div class="container">
-        <h1>Edit Post</h1>
+    <div class="ml-6 mt-6">
+        <h1 class="font-medium text-3xl">Edit Post</h1>
         <form method="post" action="/posts/{{ $post->id }}" x-data="formHandler()">
             @csrf
             @method('PUT')
 
-            <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <textarea class="form-control" id="title" name="title" rows="3" required>{{ $post->title }}</textarea>
+            <div class="mt-12 mb-3 flex flex-col">
+                <label for="title" class="form-label font-medium text-3xl">Title</label>
+                <textarea class="form-control w-5/12 mt-2" id="title" name="title" rows="3" required>{{ $post->title }}</textarea>
             </div>
 
             <!-- Tag input section -->
             <div>
-                <label for="tag">Tags</label>
-                <div class="flex gap-2 mb-2">
+                <label for="tag" class="font-medium text-3xl">Tags</label>
+                <div class="flex gap-2 mb-2 mt-3">
                     <input type="text" id="tag" x-model="tag" @keydown.enter.prevent="addTagAndFocus"
                         placeholder="Enter a tag">
                     <button type="button" @click="addTagAndFocus">Add Tag</button>
@@ -30,7 +30,9 @@
                 <input type="hidden" name="tags" :value="tags.join(',')">
             </div>
 
-            <button type="submit" class="btn btn-primary">Update Post</button>
+            <button type="submit" class="btn btn-primary bg-orange-500 text-white p-2 rounded-lg">Update Post</button>
+            <button type="button" @click="history.back()"
+                class="btn btn-primary bg-white border-2 border-orange-500 p-2 rounded-lg">Cancel</button>
         </form>
     </div>
 

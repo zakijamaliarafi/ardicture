@@ -94,12 +94,16 @@ class UserController extends Controller
         $likedPostCount = Like::where('user_id', $userId)->count();
         $userPosts = Post::getPostsByUserId($userId);
         $likedPosts = Post::getLikedPosts($userId);
+
+
+
         return view('users.profile', [
             'user' => $user,
             'postCount' => $postCount,
             'likedPostCount' => $likedPostCount,
             'userPosts' => $userPosts,
-            'likedPosts' => $likedPosts
+            'likedPosts' => $likedPosts,
+
         ]);
     }
 
@@ -107,7 +111,14 @@ class UserController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        return view('users.edit', ['user' => $user]);
+        /*$user_profile = User::where('user_id', auth()->user->id)->value('user_profile');
+        if (!$user_profile) {
+            $user_profile = 0;
+        }*/
+        return view('users.edit', [
+            'user' => $user,
+            'user_profile' => 0,
+        ]);
     }
 
     // Update User Data
