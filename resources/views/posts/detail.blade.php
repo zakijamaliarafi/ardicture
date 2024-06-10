@@ -140,10 +140,10 @@
                     @csrf
                     <div class="flex justify-between items-center my-2">
                         <div class="w-8 h-8 rounded-full overflow-hidden">
-                            <img class="w-full h-full object-cover" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
+                            <img class="w-full h-full object-cover" src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}" alt="">
                         </div>
-                        <input x-model="comment" class="border p-1 w-4/5 rounded" type="text" placeholder="Leave a comment" required></input>
-                        <button type="submit" class=" bg-ardicture-orange text-white font-extrabold px-4 py-1 rounded-2xl">Send</button>
+                        <input x-model="comment" class="border p-1 w-4/5 rounded" type="text" placeholder="Leave a comment" required>
+                        <button type="submit" class="bg-ardicture-orange text-white font-extrabold px-4 py-1 rounded-2xl">Send</button>
                     </div>
                 </form>
                 <div x-text="message" class="mt-2 text-green-500"></div>
@@ -154,7 +154,7 @@
             </div>
             @endif
             <!-- Comments Section -->
-            <div x-data="commentList({{ json_encode($comments) }})" id="comment-list">
+            <div x-data="commentList({{ json_encode($comments) }}, {{ Auth::check() ? Auth::id() : 'null' }}, {{ Auth::check() ? '\'' . Auth::user()->role . '\'' : '' }})" id="comment-list">
                 <template x-for="comment in comments" :key="comment.id">
                     <div class="flex my-2">
                         <a :href="'/users/' + comment.user.id">
@@ -166,12 +166,42 @@
                             <a :href="'/users/' + comment.user.id">
                                 <p class="font-medium" x-text="comment.user.username"></p>
                             </a>
-                            <p x-text="comment.comment"></p>
+                            <p x-show="!comment.editing" x-text="comment.comment"></p>
+                            <input x-show="comment.editing" x-model="comment.editText" class="border p-1 rounded" type="text">
                             <p class="text-sm text-gray-500" x-text="new Date(comment.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })"></p>
                         </div>
+                        <div x-show="comment.editing" class="mt-7 ml-5">
+                            <button @click="updateComment(comment)" class="text-sm px-2 py-1 text-green-500 hover:bg-green-500 hover:text-white rounded">Save</button>
+                            <button @click="cancelEdit(comment)" class="text-sm px-2 py-1 text-red-500 hover:bg-red-500 hover:text-white rounded">Cancel</button>
+                        </div>
+                        @if (Auth::check())
+                        <template x-if="comment.user.id === authUserId || authUserRole === 'admin'">
+                            <div x-show="!comment.editing" x-data="{ open: false }" class="ml-auto mr-24 mt-4 relative">
+                                <button @click="open = !open" class="focus:outline-none">
+                                    <img class="w-6" src="{{asset('images/TripleDotAction.png')}}" alt="">
+                                </button>
+                                <ul
+                                    x-show="open"
+                                    @click.away="open = false"
+                                    class="absolute right-0 w-20 py-2 bg-white rounded-lg shadow-xl z-10"
+                                >
+                                    <template x-if="comment.user.id === authUserId">
+                                        <li>
+                                            <button @click="editComment(comment); open = false"  class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Edit</button>
+                                        </li>
+                                    </template>
+                                    <template x-if="comment.user.id === authUserId || authUserRole === 'admin'">
+                                        <li>
+                                            <button @click="deleteComment(comment)" class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Delete</button>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </template>
+                        @endif
                     </div>
                 </template>
-            </div>
+            </div>            
         </div>
         <div class="w-2/5">
         </div>
@@ -233,17 +263,119 @@
             }
         }
 
-        function commentList(initialComments) {
+        function commentList(initialComments, authUserId, authUserRole, postId) {
             return {
-                comments: initialComments,
+                comments: initialComments.map(comment => ({ ...comment, editing: false, editText: comment.comment, showReplyForm: false, replyText: '', replies: comment.replies || [] })),
+                authUserId: authUserId,
+                authUserRole: authUserRole,
+                postId: postId,
                 init() {
                     this.$el.addEventListener('comment-added', event => {
                         this.addComment(event.detail);
                     });
+                    this.$el.addEventListener('reply-added', event => {
+                        this.addReply(event.detail);
+                    });
                 },
                 addComment(comment) {
-                    this.comments.push(comment.comment);
-                }
+                    this.comments.push({ ...comment.comment, editing: false, editText: comment.comment, showReplyForm: false, replyText: '', replies: [] });
+                },
+                // addReply(reply) {
+                //     const parentComment = this.comments.find(comment => comment.id === reply.comment.parent_id);
+                //     if (parentComment) {
+                //         parentComment.replies.push(reply);
+                //     }
+                // },
+                editComment(comment) {
+                    comment.editing = true;
+                    comment.editText = comment.comment;
+                },
+                cancelEdit(comment) {
+                    comment.editing = false;
+                    comment.editText = comment.comment;
+                },
+                updateComment(comment) {
+                    fetch(`/comments/${comment.id}/update`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                        },
+                        body: JSON.stringify({ comment: comment.editText })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            comment.comment = comment.editText;
+                            comment.editing = false;
+                        } else {
+                            console.error('Update failed:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                },
+                deleteComment(comment) {
+                    fetch(`/comments/${comment.id}/delete`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            this.comments = this.comments.filter(c => c.id !== comment.id);
+                        } else {
+                            console.error('Delete failed:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                },
+                // sendReply(comment) {
+                //     console.log(comment.replyText, this.postId, comment.id);
+                //     fetch('/comments/store', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //             'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                //         },
+                //         body: JSON.stringify({ comment: comment.replyText, post_id: this.postId, parent_id: comment.id })
+                //     })
+                //     .then(response => {
+                //         // Log the raw response
+                //         console.log('Raw response:', response);
+                //         if (!response.ok) {
+                //             throw new Error(`HTTP error! status: ${response.status}`);
+                //         }
+                //         return response.json();
+                //     })
+                //     .then(data => {
+                //         if (data.success) {
+                //             comment.replyText = '';
+                //             this.$el.dispatchEvent(new CustomEvent('reply-added', { detail: data.reply }));
+                //         } else {
+                //             console.error('Reply failed:', data.message);
+                //         }
+                //     })
+                //     .catch(error => {
+                //         console.error('Error:', error);
+                //     });
+                // }
             }
         }
 
@@ -253,7 +385,6 @@
                 postId: postId,
                 message: '',
                 sendComment() {
-                    console.log('Sending comment:', this.comment, this.postId);
                     fetch('/comments/store', {
                         method: 'POST',
                         headers: {

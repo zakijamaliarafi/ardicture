@@ -82,4 +82,13 @@ Route::post('/tags/store', [TagController::class, 'store']);
 // Show Post by Tag
 Route::get('/tags/{tag}', [TagController::class, 'show']);
 
+// Create New Comment
 Route::post('/comments/store', [CommentController::class, 'store']);
+
+// Update Comment
+Route::put('/comments/{comment}/update', [CommentController::class, 'update'])
+->middleware('auth');
+
+// Delete Comment
+Route::delete('/comments/{comment}/delete', [CommentController::class, 'destroy'])
+->middleware('auth');
