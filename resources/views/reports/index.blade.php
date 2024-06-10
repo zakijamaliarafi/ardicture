@@ -23,7 +23,7 @@
                         <a href="{{ route('posts.show', $report->post->id) }}">View Post</a>
                     </button>
 
-                    <form action="{{ route('reports.destroy', $report->id) }}" method="POST">
+                    <form action="/reports/destroy/{{ $report->id }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit"

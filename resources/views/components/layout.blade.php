@@ -9,11 +9,16 @@
     @vite('resources/css/app.css')
     @vite(['resources/js/app.js'])
     <title>Ardicture</title>
-
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
 </head>
 
-<body @if (request()->is('login') || request()->is('register')) style="background-image: url({{ asset('images/Background.jpg') }});" class="bg-center bg-cover bg-fixed" @endif>
-
+<body
+    @if (request()->is('login') || request()->is('register')) style="background-image: url({{ asset('images/Background.jpg') }});" class="bg-center bg-cover bg-fixed" @endif>
+    <!------------------------------ Navbar---------------------- -->
     <nav class="bg-white h-16 flex items-center py-4 fixed w-full z-50">
         <button onclick="sidebar()" class="w-24">
             <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto my-5">
@@ -47,32 +52,119 @@
             @endif
         </div>
     </nav>
-    <main id="content" class="flex h-screen">
+    <main id="content" class="flex h-screen" x-data="{ activeTab: 'posts' }" x-cloak>
+        <!------------------------------ Sidebar ------------------------------------>
         <div id="sidebar"
-            class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-slate-400 duration-300 w-16 h-screen mt-16 overflow-hidden fixed">
-            <div class="w-72 bg-red-100 flex py-6">
-                <div class="w-16">
-                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+            class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-white duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
+            <!------------Container Semua Konten Sidebar--------------------->
+            <div class="w-72 bg-white flex pt-6 h-16">
+                <!------------Container Satu Row Sidebar--------------------->
+                <!------------------------- HOME ------------------------->
+                <div class="w-16 flex justify-center items-center">
+                    <div class="w-14 content-center">
+                        <a class="" href="/">
+                            <img src="{{ asset('images/House-Icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                        </a>
+                    </div>
+
+                    @if (url()->current() == url('/'))
+                        <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
+                        </div>
+                    @endif
                 </div>
                 <div class="w-48">
-                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                    <a href="/">
+                        <p class="font-sans text-xl text-left ml-4">Home</p>
+                    </a>
                 </div>
+                @if (url()->current() == url('/'))
+                    <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                    </div>
+                    <div class="w-6">
+                    </div>
+                @endif
+
             </div>
-            <div class="w-72 bg-red-100 flex py-6">
-                <div class="w-16">
-                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+            <!------------------------- BOOKMARK------------------------->
+            <div class="w-72 bg-white flex pt-6 h-16" @click="activeTab = 'liked'">
+                <div class="w-16 flex justify-center items-center">
+                    <div class="w-14 content-center">
+                        <a class="" href="/profile">
+                            <img src="{{ asset('images/Bookmark.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                        </a>
+                    </div>
+
+                    @if (url()->current() == url('/profile'))
+                        <div x-show="activeTab === 'liked'" id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
+                        </div>
+                    @endif
                 </div>
                 <div class="w-48">
-                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                    <p class="font-sans text-xl text-left ml-4">Favorites</p>
                 </div>
+                @if (url()->current() == '/profile')
+                    <div x-show="activeTab === 'liked'">
+                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                        </div>
+                        <div class="w-6">
+                        </div>
+                    </div>
+                @endif
             </div>
-            <div class="w-72 bg-red-100 flex py-6">
-                <div class="w-16">
-                    <img src="{{ asset('images/SideBarAction.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+            <!------------------------- CREATE POST ------------------------->
+            <div class="w-72 bg-white flex pt-6 h-16">
+                <div class="w-16 flex justify-center items-center">
+                    <div class="w-14 content-center">
+                        <a class="" href="/posts/create">
+                            <img src="{{ asset('images/Circle-Add.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                        </a>
+                    </div>
+
+                    @if (url()->current() == url('/posts/create'))
+                        <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
+                        </div>
+                    @endif
                 </div>
                 <div class="w-48">
-                    <img src="{{ asset('images/Ardicture-icon.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                    <a href="/posts/create">
+                        <p class="font-sans text-xl text-left ml-4">Upload</p>
+                    </a>
                 </div>
+                @if (url()->current() == url('/posts/create'))
+                    <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                    </div>
+                    <div class="w-6">
+                    </div>
+                @endif
+            </div>
+            <!------------------------- PROFILE ------------------------->
+            <div class="w-72 bg-white flex pt-6 h-16">
+                <div class="w-16 flex justify-center items-center">
+                    <div class="w-14 content-center">
+                        <a class="" href="/profile">
+                            <img src="{{ asset('images/Profile.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                        </a>
+                    </div>
+
+                    @if (url()->current() == url('/profile'))
+                        <div x-show="activeTab === 'posts'" id="closed_indicator"
+                            class="ml-1 w-1 bg-orange-500 h-10">
+                        </div>
+                    @endif
+                </div>
+                <div class="w-48">
+                    <a href="/profile">
+                        <p class="font-sans text-xl text-left ml-4">Profile</p>
+                    </a>
+                </div>
+                @if (url()->current() == url('/profile'))
+                    <div x-show="activeTab === 'posts'">
+                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                        </div>
+                        <div class="w-6">
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
         <div class="mt-16 @if (!request()->is('login') && !request()->is('register') && !request()->is('/')) ml-16 @endif w-full">
@@ -87,13 +179,16 @@
 </body>
 <script>
     function sidebar() {
+        var indicator = document.getElementById('closed_indicator');
         var sidebar = document.getElementById('sidebar');
         if (sidebar.classList.contains('w-16')) {
             sidebar.classList.toggle('w-16');
             sidebar.classList.toggle('w-72');
+            indicator.hidden = !indicator.hidden;
         } else {
             sidebar.classList.toggle('w-72');
             sidebar.classList.toggle('w-16');
+            indicator.hidden = !indicator.hidden;
         }
     }
 </script>

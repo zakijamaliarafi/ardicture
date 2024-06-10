@@ -7,6 +7,7 @@ use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Image;
+use App\Models\Report;
 use App\Models\PostTag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,7 +26,7 @@ class PostController extends Controller
         $animePosts = Post::getPostsByTag('anime');
         $artPosts = Post::getPostsByTag('art');
         $posterPosts = Post::getPostsByTag('poster');
-        $wallpaperPosts = Post::getPostsByTag('wallpaper'); 
+        $wallpaperPosts = Post::getPostsByTag('wallpaper');
 
         return view('index', [
             'posts' => $posts,
@@ -51,7 +52,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'description' => 'required|max:255',
+            'title' => 'required|max:255',
         ]);
 
         $validatedImage = $request->validate([
@@ -95,21 +96,29 @@ class PostController extends Controller
     public function show($post)
     {
         $post = Post::with('images')->find($post);
-        
+
         $like_id = 0;
-        if(Auth::check()){
+        if (Auth::check()) {
             $like_id = Like::where('post_id', $post->id)->where('user_id', auth()->user()->id)->value('id');
             if (!$like_id) {
                 $like_id = 0;
             }
         }
-        
+
+        $report_id = 0;
+        if (Auth::check()) {
+            $report_id = Report::where('post_id', $post->id)->where('user_id', auth()->user()->id)->value('id');
+            if (!$report_id) {
+                $report_id = 0;
+            }
+        }
+
         if ($post === null) {
             abort(404);
         }
 
         $images = $post->images->map(function ($image) {
-        return asset('storage/' . $image->image);
+            return asset('storage/' . $image->image);
         });
 
         $user = $post->user;
@@ -119,9 +128,11 @@ class PostController extends Controller
 
         $randomPost = Post::getRandomPosts(4);
 
+
         return view('posts.detail', [
             'post' => $post,
             'like_id' => $like_id,
+            'report_id' => $report_id,
             'images' => $images,
             'user' => $user,
             'tags' => $tags,
@@ -136,7 +147,7 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         // Make sure logged in user is owner
-        if($post->user_id != auth()->id()) {
+        if ($post->user_id != auth()->id()) {
             abort(403, 'Unauthorized Action');
         }
 
@@ -157,12 +168,12 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         // Make sure logged in user is owner
-        if($post->user_id != auth()->id()) {
+        if ($post->user_id != auth()->id()) {
             abort(403, 'Unauthorized Action');
         }
 
         $validatedData = $request->validate([
-            'description' => 'required|max:255',
+            'title' => 'required|max:255',
         ]);
 
         $post->update($validatedData);
@@ -208,8 +219,8 @@ class PostController extends Controller
         $userId = $post->user_id;
 
         // Make sure logged in user is owner or admin
-        if($userId != auth()->id()) {
-            if(auth()->user()->role != 'admin'){
+        if ($userId != auth()->id()) {
+            if (auth()->user()->role != 'admin') {
                 abort(403, 'Unauthorized Action');
             }
         }
@@ -227,6 +238,10 @@ class PostController extends Controller
 
         // Delete the post
         $post->delete();
+
+        if (auth()->user()->role == 'admin') {
+            return redirect()->route('reports.show');
+        }
 
         return redirect()->route('users.profile', ['user' => $userId]);
     }
