@@ -52,13 +52,14 @@
             @endif
         </div>
     </nav>
-    <main id="content" class="flex h-screen">
+    <main id="content" class="flex h-screen" x-data="{ activeTab: 'posts' }" x-cloak>
         <!------------------------------ Sidebar ------------------------------------>
         <div id="sidebar"
-            class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-slate-400 duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
+            class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-white duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
             <!------------Container Semua Konten Sidebar--------------------->
-            <div class="w-72 bg-red-100 flex pt-6 h-16">
+            <div class="w-72 bg-white flex pt-6 h-16">
                 <!------------Container Satu Row Sidebar--------------------->
+                <!------------------------- HOME ------------------------->
                 <div class="w-16 flex justify-center items-center">
                     <div class="w-14 content-center">
                         <a class="" href="/">
@@ -84,30 +85,34 @@
                 @endif
 
             </div>
-            <div class="w-72 bg-red-100 flex pt-6 h-16">
+            <!------------------------- BOOKMARK------------------------->
+            <div class="w-72 bg-white flex pt-6 h-16" @click="activeTab = 'liked'">
                 <div class="w-16 flex justify-center items-center">
                     <div class="w-14 content-center">
-                        <a class="" href="/">
+                        <a class="" href="/profile">
                             <img src="{{ asset('images/Bookmark.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
                         </a>
                     </div>
 
-                    @if (url()->current() == url('/favorites'))
-                        <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
+                    @if (url()->current() == url('/profile'))
+                        <div x-show="activeTab === 'liked'" id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
                 </div>
                 <div class="w-48">
                     <p class="font-sans text-xl text-left ml-4">Favorites</p>
                 </div>
-                @if (url()->current() == '/favorites')
-                    <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
-                    </div>
-                    <div class="w-6">
+                @if (url()->current() == '/profile')
+                    <div x-show="activeTab === 'liked'">
+                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                        </div>
+                        <div class="w-6">
+                        </div>
                     </div>
                 @endif
             </div>
-            <div class="w-72 bg-red-100 flex pt-6 h-16">
+            <!------------------------- CREATE POST ------------------------->
+            <div class="w-72 bg-white flex pt-6 h-16">
                 <div class="w-16 flex justify-center items-center">
                     <div class="w-14 content-center">
                         <a class="" href="/posts/create">
@@ -132,7 +137,8 @@
                     </div>
                 @endif
             </div>
-            <div class="w-72 bg-red-100 flex pt-6 h-16">
+            <!------------------------- PROFILE ------------------------->
+            <div class="w-72 bg-white flex pt-6 h-16">
                 <div class="w-16 flex justify-center items-center">
                     <div class="w-14 content-center">
                         <a class="" href="/profile">
@@ -141,7 +147,8 @@
                     </div>
 
                     @if (url()->current() == url('/profile'))
-                        <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
+                        <div x-show="activeTab === 'posts'" id="closed_indicator"
+                            class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
                 </div>
@@ -151,9 +158,11 @@
                     </a>
                 </div>
                 @if (url()->current() == url('/profile'))
-                    <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
-                    </div>
-                    <div class="w-6">
+                    <div x-show="activeTab === 'posts'">
+                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                        </div>
+                        <div class="w-6">
+                        </div>
                     </div>
                 @endif
             </div>

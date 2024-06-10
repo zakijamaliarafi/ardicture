@@ -61,18 +61,14 @@
                         <div class="mt-3" x-data="likes({{ $like_id }}, {{ $post->id }}, {{ auth()->user()->id }})">
                             <form @submit.prevent="toggle">
                                 @csrf
-                                <div>
-                                    <button type="submit"
-                                        :class="{
-                                            'bg-red-500': like_id,
-                                            'bg-white': !like_id,
-                                            'text-black': !
-                                                like_id,
-                                            'text-white': like_id
-                                        }"
-                                        class="px-4 py-1 rounded-md">
-                                        Likes
+                                <div class="flex">
+                                    <button type="submit">
+                                        <img x-show="!like_id" class="h-8"
+                                            src="{{ asset('images/Heart-Empty.png') }}" alt="">
+                                        <img x-show="like_id" class="h-8" src="{{ asset('images/Heart-Fill.png') }}"
+                                            alt="">
                                     </button>
+                                    <span class="ml-3 self-center">Add to Bookmark</span>
                                 </div>
                             </form>
                         </div>
@@ -81,7 +77,7 @@
                             <a href="/login" class="px-4 py-1 rounded-md bg-white text-black">Likes</a>
                         </div>
                     @endif
-                    <div x-data="{ open: false }" class="relative" x-cloak>
+                    <div x-data="{ open: false }" class="relative self-center" x-cloak>
                         <button @click="open = !open" class="focus:outline-none">
                             <img class="w-10" src="{{ asset('images/TripleDotAction.png') }}" alt="">
                         </button>
@@ -139,7 +135,7 @@
 
                                                 <div x-cloak x-show="toggle_popup"
                                                     class="fixed inset-0 z-50 flex justify-center bg-black/70">
-                                                    <div class="flex flex-col w-5/12 h-1/3 bg-slate-500 rounded-xl self-center p-8"
+                                                    <div class="flex flex-col w-5/12 h-1/3 bg-white rounded-xl self-center p-8"
                                                         @click.outside="toggle_popup = !toggle_popup">
                                                         <span class="font-medium text-2xl">Detail of Report</span>
                                                         <select x-model="report_description"

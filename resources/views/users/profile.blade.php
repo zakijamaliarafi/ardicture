@@ -18,7 +18,7 @@
             <a href="/profile/edit">Edit</a>
         </div>
     </div>
-    <div x-data="{ activeTab: 'posts' }" class="mx-24 my-5">
+    <div class="mx-24 my-5">
         <!-- Buttons to switch between Posts and Liked -->
         <div class="flex space-x-4 mb-6 text-base">
             <button @click="activeTab = 'posts'"
