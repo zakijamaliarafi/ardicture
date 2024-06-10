@@ -52,7 +52,7 @@
                 </div>
             </div>
         </div>
-        <div class="m-10 flex">
+        <div class="m-10 mb-32 flex">
             <div class="w-3/5">
                 <!-- like button and action button container -->
                 <div class="flex justify-between">
@@ -135,7 +135,7 @@
 
                                                 <div x-cloak x-show="toggle_popup"
                                                     class="fixed inset-0 z-50 flex justify-center bg-black/70">
-                                                    <div class="flex flex-col w-5/12 h-1/3 bg-white rounded-xl self-center p-8"
+                                                    <div class="flex flex-col w-5/12 h-[16rem] bg-white rounded-xl self-center p-8"
                                                         @click.outside="toggle_popup = !toggle_popup">
                                                         <span class="font-medium text-2xl">Detail of Report</span>
                                                         <select x-model="report_description"

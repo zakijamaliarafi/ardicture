@@ -20,7 +20,7 @@
             @endif
         </div>
     </div>
-    <div class="m-10 my-5">
+    <div class="m-10 mt-5 mb-32">
         <!-- Buttons to switch between Posts and Liked -->
         <div class="flex space-x-4 mb-6 text-base">
             <button @click="activeTab = 'posts'"

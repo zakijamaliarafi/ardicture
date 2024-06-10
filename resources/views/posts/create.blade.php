@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="ml-10 mt-5">
+    <div class="ml-10 mt-5 mb-32">
         <form method="post" action="/posts/store" enctype="multipart/form-data" id="post-form" x-data="formHandler()">
             @csrf
 

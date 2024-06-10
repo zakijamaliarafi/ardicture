@@ -1,5 +1,5 @@
-<footer class="z-50 absolute inset-x-0">
-    <div class="flex mt-24 py-12 border-t-4">
+<footer class="absolute inset-x-0">
+    <div class="flex py-12 border-t-4">
             <div class="ml-12 text-sm font-medium">
                 <img class="h-20 mb-0.5" src="{{asset('images/Ardicture-logo.png')}}" alt="">
                 <p>Show Your Creativity, Preserve Your</p>

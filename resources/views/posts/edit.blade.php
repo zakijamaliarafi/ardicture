@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="ml-6 mt-6">
+    <div class="ml-6 mt-6 mb-32">
         <h1 class="font-medium text-3xl">Edit Post</h1>
         <form method="post" action="/posts/{{ $post->id }}" x-data="formHandler()">
             @csrf

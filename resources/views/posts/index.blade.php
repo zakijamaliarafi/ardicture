@@ -6,7 +6,7 @@
         <p>Search for '{{$search}}'</p>
         @endif
     </div>
-    <div class="flex justify-start flex-wrap gap-x-8 gap-y-4 ml-10">
+    <div class="flex justify-start flex-wrap gap-x-8 gap-y-4 ml-10 mb-32">
     @foreach($posts as $post)
         <x-post-card :post="$post" />
     @endforeach

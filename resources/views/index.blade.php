@@ -22,7 +22,7 @@
     <div class="ml-24 my-5">
         <p class="text-2xl">Home</p>
     </div>
-    <div x-data="{ activeTab: 'all' }" class="ml-24 mb-5">
+    <div x-data="{ activeTab: 'all' }" class="ml-24 mb-32">
 
         <!-- Buttons to switch between categories -->
         <div class="flex space-x-4 mb-6 text-base">
