@@ -9,10 +9,14 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostDetailController;
 
 // Show Homepage
 Route::get('/', [PostController::class, 'index']);
+
+// Show Search Results
+// Route::get('/search', [PostController::class, 'search']);
 
 // Show Register/Create Form
 Route::get('/register', [UserController::class, 'create'])
@@ -94,3 +98,14 @@ Route::post('/tags/store', [TagController::class, 'store']);
 
 // Show Post by Tag
 Route::get('/tags/{tag}', [TagController::class, 'show']);
+
+// Create New Comment
+Route::post('/comments/store', [CommentController::class, 'store']);
+
+// Update Comment
+Route::put('/comments/{comment}/update', [CommentController::class, 'update'])
+->middleware('auth');
+
+// Delete Comment
+Route::delete('/comments/{comment}/delete', [CommentController::class, 'destroy'])
+->middleware('auth');

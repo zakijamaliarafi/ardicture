@@ -15,7 +15,9 @@
             <p>{{ $user->user_description }}</p>
         </div>
         <div>
+            @if (Auth::check() && Auth::user()->id == $user->id)
             <a href="/profile/edit">Edit</a>
+            @endif
         </div>
     </div>
     <div class="mx-24 my-5">
