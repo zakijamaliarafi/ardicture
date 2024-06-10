@@ -36,6 +36,8 @@
         </form>
     </div>
 
+    <x-footer />
+
     <script>
         document.addEventListener('alpine:init', () => {
             console.log('Alpine.js initialized');

@@ -48,4 +48,5 @@
 
     </table>
 
+    <x-footer />
 </x-layout>
