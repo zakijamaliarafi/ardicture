@@ -42,14 +42,46 @@ class PostController extends Controller
     {
         $search = $request->input('search');
 
-        $posts = Post::where('description', 'like', '%' . $search . '%')->with('user')->paginate(20);
+        $posts = DB::table('posts')
+                ->where(function($query) use ($search) {
+                    $query->where('posts.title', 'like', '%' . $search . '%')
+                        ->orWhere('tags.tag', 'like', '%' . $search . '%');
+                })
+                ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')
+                ->join('tags', 'post_tag.tag_id', '=', 'tags.id')
+                ->join('users', 'posts.user_id', '=', 'users.id')
+                ->leftJoin('images', 'posts.id', '=', 'images.post_id')
+                ->select(
+                    'posts.id',
+                    'posts.title',
+                    'posts.created_at',
+                    'posts.updated_at',
+                    'users.id as user_id',
+                    'users.username',
+                    'users.user_profile',
+                    DB::raw('MAX(images.image) as post_image') // Aggregate to avoid the GROUP BY issue
+                )
+                ->groupBy(
+                    'posts.id',
+                    'posts.title',
+                    'posts.created_at',
+                    'posts.updated_at',
+                    'users.id',
+                    'users.username',
+                    'users.user_profile'
+                )
+                ->paginate(20);
 
         foreach ($posts as $post) {
-            $user = $post->user;
-            $post->userId = $user->id;
-            $post->username = $user->username;
-            $post->profile = $user->user_profile;
-            $post->image = optional($post->images()->first())->image;
+            $post->userId = $post->user_id;
+            $post->username = $post->username;
+            $post->profile = $post->user_profile;
+            $post->image = $post->post_image;
+        }
+
+        // Make sure to unset temporary fields to avoid redundancy
+        foreach ($posts as $post) {
+            unset($post->user_id, $post->post_image);
         }
 
         return view('posts.index', [

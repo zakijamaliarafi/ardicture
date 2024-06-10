@@ -31,15 +31,15 @@
         </div>
 
         <div class="flex">
-            <a href="/search" class="mx-2">Search</a>
+            <a href="/" class="mx-2">Search</a>
             <a href="/about" class="mx-2">About</a>
         </div>
         <div class="flex w-full justify-end">
             @if (Auth::check())
                 <a href="/profile" class="flex mx-2">
-                    <img class="h-8 mr-1"
-                        src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
-                        alt="User Profile">
+                    <div class="w-8 h-8 mr-2 rounded-full overflow-hidden">
+                        <img class="w-full h-full object-cover" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
+                    </div>
                     <span class="mt-1">{{ Auth::user()->username }}</span>
                 </a>
                 <form method="POST" action="/logout" class="mx-2">
@@ -166,49 +166,42 @@
                     </div>
                 @endif
             </div>
+            <!------------------------- Reports ------------------------->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+            <div class="w-72 bg-white flex pt-6 h-16">
+                <div class="w-16 flex justify-center items-center">
+                    <div class="w-14 content-center">
+                        <a class="" href="/reports">
+                            <img src="{{ asset('images/Reports.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                        </a>
+                    </div>
+
+                    @if (url()->current() == url('/reports'))
+                        <div x-show="activeTab === 'posts'" id="closed_indicator"
+                            class="ml-1 w-1 bg-orange-500 h-10">
+                        </div>
+                    @endif
+                </div>
+                <div class="w-48">
+                    <a href="/profile">
+                        <p class="font-sans text-xl text-left ml-4">Reports</p>
+                    </a>
+                </div>
+                @if (url()->current() == url('/reports'))
+                    <div x-show="activeTab === 'posts'">
+                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                        </div>
+                        <div class="w-6">
+                        </div>
+                    </div>
+                @endif
+            </div>
+            @endif
         </div>
         <div class="mt-16 @if (!request()->is('login') && !request()->is('register') && !request()->is('/')) ml-16 @endif w-full">
             {{ $slot }}
         </div>
     </main>
-
-
-    <footer>
-        <div class="flex mt-24 py-12 border-t-4">
-                <div class="ml-12 text-sm font-medium">
-                    <img class="h-20 mb-0.5" src="{{asset('images/Ardicture-logo.png')}}" alt="">
-                    <p>Show Your Creativity, Preserve Your</p>
-                    <p>Moments, One Frame and Canva at</p>
-                    <p>a Time.</p>
-                    <p class="text-sm font-normal mt-0.5">Ardicture, 2024</p>
-                </div>
-                <div class="ml-auto mr-12 mt-4 flex gap-5">
-                    <div>
-                        <p class="text-sm font-medium mb-1">Contact</p>
-                        <div class="flex items-center gap-2 mb-0.5">
-                            <img class="h-4" src="{{asset('images/Email.png')}}" alt="">
-                            <p class="text-sm font-normal">support@ardicture.id</p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <img class="h-4" src="{{asset('images/Phone.png')}}" alt="">
-                            <p class="text-sm font-normal">+62 851-5543-3460</p>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium mb-1">Support</p>
-                        <p class="text-sm font-normal mb-0.5">Feedback</p>
-                        <p class="text-sm font-normal">Help Center (FAQ)</p>
-                    </div>
-                    <div>
-                        <p class="text-sm font-medium mb-1">Legal</p>
-                        <p class="text-sm font-normal mb-0.5">Terms of Service</p>
-                        <p class="text-sm font-normal">Privacy Policy</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <x-flash-message />
 </body>
 <script>

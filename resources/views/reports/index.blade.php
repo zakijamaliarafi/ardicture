@@ -3,7 +3,7 @@
     @php
         $i = 1;
     @endphp
-    <table class="table-fixed border-collapse ms-6 w-[400px] md:w-[750px] lg:w-[1000px]">
+    <table class="table-fixed border-collapse ms-6 w-[400px] md:w-[750px] lg:w-[1000px] mb-32">
         <thead class="bg-gray-300">
             <tr class="">
                 <th class="py-4 px-2 w-1/12">No</th>
@@ -48,4 +48,5 @@
 
     </table>
 
+    <x-footer />
 </x-layout>
