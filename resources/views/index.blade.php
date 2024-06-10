@@ -1,4 +1,21 @@
 <x-layout>
+    <div class="mx-24 my-5 flex justify-center">
+        <form action="/search">
+        <div class="inline-flex border-2 items-center rounded-lg">
+                <input
+                type="text"
+                name="search"
+                placeholder="Searching for someting?"
+                class="text-lg px-5 py-2 rounded-l-lg w-[32rem]"
+                />
+                <div class="bg-ardicture-orange px-5 py-2 rounded-r-lg">
+                    <button type="submit">
+                        <img class="h-5" src="{{asset('images/Search.png')}}" alt="">
+                    </button>
+                </div>
+        </div>
+    </form>
+    </div>
     <div class="mx-24 my-5">
         <p class="text-2xl">Home</p>
     </div>

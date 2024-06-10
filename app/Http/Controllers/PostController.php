@@ -35,6 +35,26 @@ class PostController extends Controller
         ]);
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        $posts = Post::where('description', 'like', '%' . $search . '%')->with('user')->paginate(20);
+
+        foreach ($posts as $post) {
+            $user = $post->user;
+            $post->userId = $user->id;
+            $post->username = $user->username;
+            $post->profile = $user->user_profile;
+            $post->image = optional($post->images()->first())->image;
+        }
+
+        return view('posts.index', [
+            'posts' => $posts,
+            'search' => $search
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */

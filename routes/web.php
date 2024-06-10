@@ -13,6 +13,9 @@ use App\Http\Controllers\PostDetailController;
 // Show Homepage
 Route::get('/', [PostController::class, 'index']);
 
+// Show Search Results
+Route::get('/search', [PostController::class, 'search']);
+
 // Show Register/Create Form
 Route::get('/register', [UserController::class, 'create'])
 ->middleware('guest');
