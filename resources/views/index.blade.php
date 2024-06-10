@@ -1,5 +1,5 @@
 <x-layout>
-    <div class="mx-24 my-5 flex justify-center">
+    {{-- <div class="mx-24 my-5 flex justify-center">
         <form action="/search">
         <div class="inline-flex border-2 items-center rounded-lg">
                 <input
@@ -15,7 +15,7 @@
                 </div>
         </div>
     </form>
-    </div>
+    </div> --}}
     <div class="mx-24 my-5">
         <p class="text-2xl">Home</p>
     </div>
