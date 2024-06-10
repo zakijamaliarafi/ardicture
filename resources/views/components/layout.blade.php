@@ -81,9 +81,10 @@
                         <p class="text-sm font-normal">Privacy Policy</p>
                     </div>
                 </div>
-                
             </div>
         </div>
     </footer>
+
+    <x-flash-message />
 </body>
 </html>

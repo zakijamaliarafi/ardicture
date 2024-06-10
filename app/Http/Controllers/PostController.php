@@ -84,7 +84,7 @@ class PostController extends Controller
         }
 
         // return redirect()->route('posts.index');
-        return redirect()->route('posts.show', ['post' => $post->id]);
+        return redirect()->route('posts.show', ['post' => $post->id])->with('message', 'Post created successfully!');
     }
 
     /**
