@@ -55,7 +55,7 @@
     <main id="content" class="flex h-screen" x-data="{ activeTab: 'posts' }" x-cloak>
         <!------------------------------ Sidebar ------------------------------------>
         <div id="sidebar"
-            class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-white duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
+            class="z-50 @if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-white duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
             <!------------Container Semua Konten Sidebar--------------------->
             <div class="w-72 bg-white flex pt-6 h-16">
                 <!------------Container Satu Row Sidebar--------------------->
