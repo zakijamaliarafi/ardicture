@@ -67,7 +67,7 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-<p align="center"><a href="" target="_blank"><img src="https://github.com/zakijamaliarafi/ardicture/blob/19f516b1cf7bbaa99b49b16e74f315301a86c38a/public/images/Ardicture-logo.png" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><a href="" target="_blank"><img src="https://github.com/zakijamaliarafi/ardicture/blob/84ffdb154797c5967c8600ff22fc3e1fb664f637/public/images/Ardicture%20-%20Dark%20Theme.svg" width="500" alt="Laravel Logo"></a></p>
 
 ## Ardicture
 
