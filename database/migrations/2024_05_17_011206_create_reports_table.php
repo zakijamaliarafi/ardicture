@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->integer('is_checked');
-            $table->string('report_description');
+            $table->integer('is_checked')->nullable();
+            $table->string('report_description')->nullable();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('post_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

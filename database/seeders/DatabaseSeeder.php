@@ -4,9 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\Post;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Image;
+use App\Models\Report;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;

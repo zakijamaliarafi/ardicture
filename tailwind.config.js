@@ -9,8 +9,12 @@ export default {
     extend: {
       colors: {
         'white': '#ffffff',
+        'ardicture-orange': '#f14902',
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }
+
