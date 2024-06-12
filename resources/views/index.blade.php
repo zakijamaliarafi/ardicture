@@ -1,8 +1,28 @@
 <x-layout>
-    <div class="mx-24 my-5">
+    <div class="ml-24 mb-10">
+        <img src="{{asset('images/Hero.png')}}" alt="">
+    </div>
+    <div class="ml-24 my-5 flex justify-center">
+        <form action="/search">
+        <div class="inline-flex border-2 items-center rounded-2xl">
+                <input
+                type="text"
+                name="search"
+                placeholder="Searching for someting?"
+                class="text-lg px-6 py-4 rounded-l-xl w-[42rem]"
+                />
+                <div class="bg-ardicture-orange px-6 py-3 rounded-r-xl">
+                    <button type="submit">
+                        <img class="h-8" src="{{asset('images/Search.png')}}" alt="">
+                    </button>
+                </div>
+        </div>
+    </form>
+    </div>
+    <div class="ml-24 my-5">
         <p class="text-2xl">Home</p>
     </div>
-    <div x-data="{ activeTab: 'all' }" class="mx-24 mb-5">
+    <div x-data="{ activeTab: 'all' }" class="ml-24 mb-32">
 
         <!-- Buttons to switch between categories -->
         <div class="flex space-x-4 mb-6 text-base">
@@ -68,4 +88,5 @@
             @endforeach
         </div>
     </div>
+    <x-footer />
 </x-layout>

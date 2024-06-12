@@ -31,15 +31,15 @@
         </div>
 
         <div class="flex">
-            <a href="/search" class="mx-2">Search</a>
+            <a href="/" class="mx-2">Search</a>
             <a href="/about" class="mx-2">About</a>
         </div>
         <div class="flex w-full justify-end">
             @if (Auth::check())
                 <a href="/profile" class="flex mx-2">
-                    <img class="h-8 mr-1"
-                        src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
-                        alt="User Profile">
+                    <div class="w-8 h-8 mr-2 rounded-full overflow-hidden">
+                        <img class="w-full h-full object-cover" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
+                    </div>
                     <span class="mt-1">{{ Auth::user()->username }}</span>
                 </a>
                 <form method="POST" action="/logout" class="mx-2">
@@ -55,7 +55,7 @@
     <main id="content" class="flex h-screen" x-data="{ activeTab: 'posts' }" x-cloak>
         <!------------------------------ Sidebar ------------------------------------>
         <div id="sidebar"
-            class="@if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-white duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
+            class="z-50 @if (request()->is('login') || request()->is('register')) ml-[-4rem] @endif bg-white duration-150 w-16 h-screen mt-16 overflow-hidden fixed">
             <!------------Container Semua Konten Sidebar--------------------->
             <div class="w-72 bg-white flex pt-6 h-16">
                 <!------------Container Satu Row Sidebar--------------------->
@@ -166,16 +166,43 @@
                     </div>
                 @endif
             </div>
+            <!------------------------- Reports ------------------------->
+            @if (Auth::check() && Auth::user()->role == 'admin')
+            <div class="w-72 bg-white flex pt-6 h-16">
+                <div class="w-16 flex justify-center items-center">
+                    <div class="w-14 content-center">
+                        <a class="" href="/reports">
+                            <img src="{{ asset('images/Reports.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                        </a>
+                    </div>
+
+                    @if (url()->current() == url('/reports'))
+                        <div x-show="activeTab === 'posts'" id="closed_indicator"
+                            class="ml-1 w-1 bg-orange-500 h-10">
+                        </div>
+                    @endif
+                </div>
+                <div class="w-48">
+                    <a href="/profile">
+                        <p class="font-sans text-xl text-left ml-4">Reports</p>
+                    </a>
+                </div>
+                @if (url()->current() == url('/reports'))
+                    <div x-show="activeTab === 'posts'">
+                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                        </div>
+                        <div class="w-6">
+                        </div>
+                    </div>
+                @endif
+            </div>
+            @endif
         </div>
         <div class="mt-16 @if (!request()->is('login') && !request()->is('register') && !request()->is('/')) ml-16 @endif w-full">
             {{ $slot }}
         </div>
     </main>
-
-
-    <footer>
-
-    </footer>
+    <x-flash-message />
 </body>
 <script>
     function sidebar() {

@@ -15,10 +15,12 @@
             <p>{{ $user->user_description }}</p>
         </div>
         <div>
+            @if (Auth::check() && Auth::user()->id == $user->id)
             <a href="/profile/edit">Edit</a>
+            @endif
         </div>
     </div>
-    <div class="mx-24 my-5">
+    <div class="m-10 mt-5 mb-32">
         <!-- Buttons to switch between Posts and Liked -->
         <div class="flex space-x-4 mb-6 text-base">
             <button @click="activeTab = 'posts'"
@@ -47,4 +49,6 @@
             @endforeach
         </div>
     </div>
+
+    <x-footer />
 </x-layout>

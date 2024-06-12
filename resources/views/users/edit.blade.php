@@ -1,9 +1,10 @@
 <x-layout>
-    <div class="ml-5 mt-5">
+    <div class="ml-6 mt-6 mb-32">
+        <h1 class="font-medium text-3xl">Edit Profile</h1>
         <form method="POST" action="/profile/update" enctype="multipart/form-data">
             @csrf
             @method('PUT')
-            <div x-data="user_profile_handler({{ auth()->user()->id }}, {{ $user_profile }})">
+            <div class="mt-6" x-data="user_profile_handler({{ auth()->user()->id }}, {{ $user_profile }})">
                 <label for="user_profile">
                     <template x-if="user_profile">
 
@@ -23,37 +24,31 @@
                 @enderror
             </div>
 
-            <div>
-                <label for="name">
-                    Name:
-                </label>
-                <input type="text" name="name" value="{{ $user->name }}" />
-
+            <div class="mt-6 mb-3 flex flex-col">
+                <label for="name" class="form-label font-medium text-3xl">Name</label>
+                <input class="form-control w-5/12 mt-2" type="text" name="name" value="{{ $user->name }}" />
+                
                 @error('name')
                     <p>{{ $message }}</p>
                 @enderror
             </div>
 
-            <div class="flex">
-                <label for="user_description">
-                    Description :
-                </label>
-                <textarea name="user_description" rows="10">{{ $user->user_description }}</textarea>
+            <div class="mt-6 mb-3 flex flex-col">
+                <label for="user_description" class="form-label font-medium text-3xl">Description</label>
+                <textarea class="form-control w-5/12 mt-2" name="user_description" rows="5">{{ $user->user_description }}</textarea>
 
                 @error('user_description')
                     <p>{{ $message }}</p>
                 @enderror
             </div>
 
-            <div>
-                <button class="bg-slate-500">
-                    Update Profile
-                </button>
-
-                <a href="/profile"> Back </a>
-            </div>
+            <button type="submit" class="btn btn-primary bg-orange-500 text-white p-2 rounded-lg">Update Profile</button>
+            <button type="button" @click="history.back()"
+                class="btn btn-primary bg-white border-2 border-orange-500 p-2 rounded-lg">Cancel</button>
         </form>
     </div>
+
+    <x-footer />
 
     <script>
         document.addEventListener('alpine:init', () => {

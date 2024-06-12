@@ -34,8 +34,12 @@ class Post extends Model
         return $this->belongsToMany(Tag::class, 'post_tag', 'post_id', 'tag_id');
     }
 
-    public static function countPostsByUserId($userId)
+    public function comments()
     {
+        return $this->hasMany(Comment::class);
+    }
+
+    public static function countPostsByUserId($userId) {
         return self::where('user_id', $userId)->count();
     }
 

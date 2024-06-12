@@ -38,6 +38,58 @@ class PostController extends Controller
         ]);
     }
 
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        $posts = DB::table('posts')
+                ->where(function($query) use ($search) {
+                    $query->where('posts.title', 'like', '%' . $search . '%')
+                        ->orWhere('tags.tag', 'like', '%' . $search . '%');
+                })
+                ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')
+                ->join('tags', 'post_tag.tag_id', '=', 'tags.id')
+                ->join('users', 'posts.user_id', '=', 'users.id')
+                ->leftJoin('images', 'posts.id', '=', 'images.post_id')
+                ->select(
+                    'posts.id',
+                    'posts.title',
+                    'posts.created_at',
+                    'posts.updated_at',
+                    'users.id as user_id',
+                    'users.username',
+                    'users.user_profile',
+                    DB::raw('MAX(images.image) as post_image') // Aggregate to avoid the GROUP BY issue
+                )
+                ->groupBy(
+                    'posts.id',
+                    'posts.title',
+                    'posts.created_at',
+                    'posts.updated_at',
+                    'users.id',
+                    'users.username',
+                    'users.user_profile'
+                )
+                ->paginate(20);
+
+        foreach ($posts as $post) {
+            $post->userId = $post->user_id;
+            $post->username = $post->username;
+            $post->profile = $post->user_profile;
+            $post->image = $post->post_image;
+        }
+
+        // Make sure to unset temporary fields to avoid redundancy
+        foreach ($posts as $post) {
+            unset($post->user_id, $post->post_image);
+        }
+
+        return view('posts.index', [
+            'posts' => $posts,
+            'search' => $search
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -87,7 +139,7 @@ class PostController extends Controller
         }
 
         // return redirect()->route('posts.index');
-        return redirect()->route('posts.show', ['post' => $post->id]);
+        return redirect()->route('posts.show', ['post' => $post->id])->with('message', 'Post created successfully!');
     }
 
     /**
@@ -95,7 +147,8 @@ class PostController extends Controller
      */
     public function show($post)
     {
-        $post = Post::with('images')->find($post);
+        // Fetch the post with its images, comments, and the user of each comment
+        $post = Post::with(['images', 'comments.user'])->find($post);
 
         $like_id = 0;
         if (Auth::check()) {
@@ -117,17 +170,20 @@ class PostController extends Controller
             abort(404);
         }
 
+        // Prepare the images URLs
         $images = $post->images->map(function ($image) {
             return asset('storage/' . $image->image);
         });
 
+        // Fetch the post's user and tags
         $user = $post->user;
         $tags = $post->tags()->orderBy('tag', 'asc')->get();
 
+        // Fetch additional posts by the same user and some random posts
         $morePostsByUser = Post::getMorePostsByuser($user->id);
-
         $randomPost = Post::getRandomPosts(4);
 
+        $comments = $post->comments;
 
         return view('posts.detail', [
             'post' => $post,
@@ -137,9 +193,11 @@ class PostController extends Controller
             'user' => $user,
             'tags' => $tags,
             'morePosts' => $morePostsByUser,
-            'randomPosts' => $randomPost
+            'randomPosts' => $randomPost,
+            'comments' => $comments
         ]);
     }
+
 
     /**
      * Show the form for editing the specified resource.

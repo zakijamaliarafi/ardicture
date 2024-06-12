@@ -39,7 +39,7 @@ class UserController extends Controller
         // Login
         Auth::login($user, $remember = true);
 
-        return redirect('/');
+        return redirect('/')->with('message', 'User created and logged in');
     }
 
     // Logout User
@@ -50,7 +50,7 @@ class UserController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/')->with('message', 'You have been logged out!');
     }
 
     // Show Login Form
@@ -70,7 +70,7 @@ class UserController extends Controller
         if (auth()->attempt($formFields, $remember = true)) {
             $request->session()->regenerate();
 
-            return redirect('/');
+            return redirect('/')->with('message', 'You are now logged in!');
         }
 
         return back()->withErrors(['username' => 'Invalid Credentials'])->onlyInput('username');
@@ -150,6 +150,6 @@ class UserController extends Controller
 
         $user->update($formFields);
 
-        return redirect('/profile');
+        return redirect('/profile')->with('message', 'Profile updated successfully!');
     }
 }

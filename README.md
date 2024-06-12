@@ -64,3 +64,31 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+<p align="center"><a href="" target="_blank"><img src="https://github.com/zakijamaliarafi/ardicture/blob/84ffdb154797c5967c8600ff22fc3e1fb664f637/public/images/Ardicture%20-%20Dark%20Theme.svg" width="500" alt="Laravel Logo"></a></p>
+
+## Ardicture
+
+Ardicture is a Laravel-based web application designed to facilitate artists and art enthusiasts to connect, share, and appreciate visual artworks.
+
+### Features
+- User Authentication: Login and registration.
+- Art Gallery: Users can upload, search, like, comment, and bookmark artworks.
+- Profile Customization: Users can customize their profiles.
+- Admin Panel: Admins can manage posts, users, and reports.
+
+## Project Overview
+
+### Background
+
+In the digital era, the need for platforms to share digital artworks and 3D renderings is growing. Ardicture aims to be an online platform for artists and art lovers to connect, share, and appreciate visual artworks.
+
+### Problem Statement
+
+The main focus is on user interaction with the website. Users can post, like, bookmark, and report artworks. Developers need an admin panel for managing posts and users, viewing reports, and modifying the website.
+
+### Implementation and Testing
+
+Implemented using HTML, Tailwind CSS, and Alpine.js. Testing includes blackbox testing to ensure functionality according to specifications.
