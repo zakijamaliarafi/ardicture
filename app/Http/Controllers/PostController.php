@@ -43,34 +43,34 @@ class PostController extends Controller
         $search = $request->input('search');
 
         $posts = DB::table('posts')
-                ->where(function($query) use ($search) {
-                    $query->where('posts.title', 'like', '%' . $search . '%')
-                        ->orWhere('tags.tag', 'like', '%' . $search . '%');
-                })
-                ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')
-                ->join('tags', 'post_tag.tag_id', '=', 'tags.id')
-                ->join('users', 'posts.user_id', '=', 'users.id')
-                ->leftJoin('images', 'posts.id', '=', 'images.post_id')
-                ->select(
-                    'posts.id',
-                    'posts.title',
-                    'posts.created_at',
-                    'posts.updated_at',
-                    'users.id as user_id',
-                    'users.username',
-                    'users.user_profile',
-                    DB::raw('MAX(images.image) as post_image') // Aggregate to avoid the GROUP BY issue
-                )
-                ->groupBy(
-                    'posts.id',
-                    'posts.title',
-                    'posts.created_at',
-                    'posts.updated_at',
-                    'users.id',
-                    'users.username',
-                    'users.user_profile'
-                )
-                ->paginate(20);
+            ->where(function ($query) use ($search) {
+                $query->where('posts.title', 'like', '%' . $search . '%')
+                    ->orWhere('tags.tag', 'like', '%' . $search . '%');
+            })
+            ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')
+            ->join('tags', 'post_tag.tag_id', '=', 'tags.id')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->leftJoin('images', 'posts.id', '=', 'images.post_id')
+            ->select(
+                'posts.id',
+                'posts.title',
+                'posts.created_at',
+                'posts.updated_at',
+                'users.id as user_id',
+                'users.username',
+                'users.user_profile',
+                DB::raw('MAX(images.image) as post_image') // Aggregate to avoid the GROUP BY issue
+            )
+            ->groupBy(
+                'posts.id',
+                'posts.title',
+                'posts.created_at',
+                'posts.updated_at',
+                'users.id',
+                'users.username',
+                'users.user_profile'
+            )
+            ->paginate(20);
 
         foreach ($posts as $post) {
             $post->userId = $post->user_id;
@@ -105,20 +105,23 @@ class PostController extends Controller
     {
         $validatedData = $request->validate([
             'title' => 'required|max:255',
-        ]);
-
-        $validatedImage = $request->validate([
-            'images' => 'required|max:10',
+            ''
         ]);
 
         $validatedData['user_id'] = auth()->user()->id;
+        $validated_image = $request->validate([
+            'images' => 'required',
+            'images.*' => 'image|mimes:jpg,jpeg,png|max:20480',
+        ]);
 
         $post = Post::create($validatedData);
+
 
         // Store Images
         if ($request->file('images')) {
             $order = 1;
             foreach ($request->file('images') as $image) {
+
                 $imagePath = $image->store('post-images', 'public');
                 $validated_image['image'] = $imagePath;
                 $validated_image['post_id'] = $post->id;
@@ -301,7 +304,7 @@ class PostController extends Controller
             return redirect()->route('reports.show');
         }
 
-        return redirect()->route('users.profile', ['user' => $userId]);
+        return redirect()->route('home');
     }
 
     public function destroyPost($id)

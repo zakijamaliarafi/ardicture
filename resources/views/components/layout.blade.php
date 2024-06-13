@@ -38,7 +38,9 @@
             @if (Auth::check())
                 <a href="/profile" class="flex mx-2">
                     <div class="w-8 h-8 mr-2 rounded-full overflow-hidden">
-                        <img class="w-full h-full object-cover" src="{{Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png')}}" alt="">
+                        <img class="w-full h-full object-cover"
+                            src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
+                            alt="">
                     </div>
                     <span class="mt-1">{{ Auth::user()->username }}</span>
                 </a>
@@ -95,7 +97,8 @@
                     </div>
 
                     @if (url()->current() == url('/profile'))
-                        <div x-show="activeTab === 'liked'" id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
+                        <div x-show="activeTab === 'liked'" id="liked_closed_indicator"
+                            class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
                 </div>
@@ -103,7 +106,7 @@
                     <p class="font-sans text-xl text-left ml-4">Favorites</p>
                 </div>
                 @if (url()->current() == '/profile')
-                    <div x-show="activeTab === 'liked'">
+                    <div x-show="activeTab === 'liked'" id="liked_open_indicator">
                         <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
                         </div>
                         <div class="w-6">
@@ -147,7 +150,7 @@
                     </div>
 
                     @if (url()->current() == url('/profile'))
-                        <div x-show="activeTab === 'posts'" id="closed_indicator"
+                        <div x-show="activeTab === 'posts'" id="profile_closed_indicator"
                             class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
@@ -158,7 +161,7 @@
                     </a>
                 </div>
                 @if (url()->current() == url('/profile'))
-                    <div x-show="activeTab === 'posts'">
+                    <div x-show="activeTab === 'posts'" id="profile_open_indicator">
                         <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
                         </div>
                         <div class="w-6">
@@ -168,34 +171,35 @@
             </div>
             <!------------------------- Reports ------------------------->
             @if (Auth::check() && Auth::user()->role == 'admin')
-            <div class="w-72 bg-white flex pt-6 h-16">
-                <div class="w-16 flex justify-center items-center">
-                    <div class="w-14 content-center">
-                        <a class="" href="/reports">
-                            <img src="{{ asset('images/Reports.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
+                <div class="w-72 bg-white flex pt-6 h-16">
+                    <div class="w-16 flex justify-center items-center">
+                        <div class="w-14 content-center">
+                            <a class="" href="/reports">
+                                <img src="{{ asset('images/Reports.png') }}" alt="Sidebar Action"
+                                    class="h-6 mx-auto">
+                            </a>
+                        </div>
+
+                        @if (url()->current() == url('/reports'))
+                            <div x-show="activeTab === 'posts'" id="closed_indicator"
+                                class="ml-1 w-1 bg-orange-500 h-10">
+                            </div>
+                        @endif
+                    </div>
+                    <div class="w-48">
+                        <a href="/profile">
+                            <p class="font-sans text-xl text-left ml-4">Reports</p>
                         </a>
                     </div>
-
                     @if (url()->current() == url('/reports'))
-                        <div x-show="activeTab === 'posts'" id="closed_indicator"
-                            class="ml-1 w-1 bg-orange-500 h-10">
+                        <div x-show="activeTab === 'posts'">
+                            <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                            </div>
+                            <div class="w-6">
+                            </div>
                         </div>
                     @endif
                 </div>
-                <div class="w-48">
-                    <a href="/profile">
-                        <p class="font-sans text-xl text-left ml-4">Reports</p>
-                    </a>
-                </div>
-                @if (url()->current() == url('/reports'))
-                    <div x-show="activeTab === 'posts'">
-                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
-                        </div>
-                        <div class="w-6">
-                        </div>
-                    </div>
-                @endif
-            </div>
             @endif
         </div>
         <div class="mt-16 @if (!request()->is('login') && !request()->is('register') && !request()->is('/')) ml-16 @endif w-full">

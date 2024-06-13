@@ -11,7 +11,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CommentController;
 
 // Show Homepage
-Route::get('/', [PostController::class, 'index']);
+Route::get('/', [PostController::class, 'index'])->name('home');
 
 // Show Search Results
 Route::get('/search', [PostController::class, 'search']);
@@ -102,8 +102,8 @@ Route::post('/comments/store', [CommentController::class, 'store']);
 
 // Update Comment
 Route::put('/comments/{comment}/update', [CommentController::class, 'update'])
-->middleware('auth');
+    ->middleware('auth');
 
 // Delete Comment
 Route::delete('/comments/{comment}/delete', [CommentController::class, 'destroy'])
-->middleware('auth');
+    ->middleware('auth');

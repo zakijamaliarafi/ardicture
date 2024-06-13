@@ -16,11 +16,11 @@
         </div>
         <div>
             @if (Auth::check() && Auth::user()->id == $user->id)
-            <a href="/profile/edit">Edit</a>
+                <a href="/profile/edit">Edit</a>
             @endif
         </div>
     </div>
-    <div class="m-10 mt-5 mb-32">
+    <div class="m-10 mt-5 mb-32" x-data="{ activeTab: 'posts' }" x-init="() => { console.log('Active Tab:', activeTab); }">
         <!-- Buttons to switch between Posts and Liked -->
         <div class="flex space-x-4 mb-6 text-base">
             <button @click="activeTab = 'posts'"
