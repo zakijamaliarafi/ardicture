@@ -103,18 +103,19 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpg,jpeg,png|max:20480',
+        ]);
+
         $validatedData = $request->validate([
             'title' => 'required|max:255',
             ''
         ]);
 
         $validatedData['user_id'] = auth()->user()->id;
-        $validated_image = $request->validate([
-            'images' => 'required',
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:20480',
-        ]);
-
         $post = Post::create($validatedData);
+
 
 
         // Store Images

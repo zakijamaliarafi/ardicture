@@ -77,8 +77,9 @@
                             <a href="/login" class="px-4 py-1 rounded-md bg-white text-black">Likes</a>
                         </div>
                     @endif
-                    <div x-data="{ open: false }" class="relative self-center" x-cloak>
-                        <button @click="open = !open" class="focus:outline-none">
+                    <!------------------ Triple Dot Action ----------------------->
+                    <div x-data="check_auth()" class="relative self-center" x-cloak>
+                        <button class="focus:outline-none" id="triple-dot-action" @click="require_login">
                             <img class="w-10" src="{{ asset('images/TripleDotAction.png') }}" alt="">
                         </button>
                         @if (Auth::check())
@@ -145,6 +146,12 @@
                                                             </option>
                                                             <option value="AI Image" class="text-lg">AI Image</option>
                                                             <option value="NSFW" class="text-lg">NSFW</option>
+                                                            <option value="Terms and Service Violation" class="text-lg">
+                                                                Terms and Service Violation
+                                                            </option>
+                                                            <option value="Privacy Breach" class="text-lg">Privacy
+                                                                Breach</option>
+
                                                         </select>
                                                         <button type="submit" @click="toggle_popup = !toggle_popup"
                                                             class="w-full h-8 rounded-full mt-5 bg-orange-500 text-white text-center">Send
@@ -293,6 +300,20 @@
         <x-footer />
 
         <script>
+            function check_auth() {
+                return {
+                    open: false,
+                    isLoggedIn: @json(Auth::check()),
+                    require_login() {
+                        if (!this.isLoggedIn) {
+                            window.location.href = '{{ route('login') }}';
+                        } else {
+                            this.open = !this.open;
+                        }
+                    }
+                }
+            }
+
             function tagList(initialTags) {
                 return {
                     tags: initialTags,
@@ -392,45 +413,45 @@
             /*
             document.addEventListener('alpine:init', () => {
 
-                Alpine.data('reports', (report_id, post_id, user_id) => ({
-                    report_id,
-                    post_id,
-                    user_id,
-                    message: '',
-                    toggle() {
-                        console.log('Sending data:', this.report_id, this.post_id, this.user_id);
-                        fetch('/reports/toggle', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]')
-                                        .content
-                                },
-                                body: JSON.stringify({
-                                    report_id: this.report_id,
-                                    post_id: this.post_id,
-                                    user_id: this.user_id
-                                })
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-                                return response.text(); // Get raw response text
-                            })
-                            .then(text => {
-                                console.log(text); // Log raw response
-                                return JSON.parse(text); // Parse the text as JSON
-                            })
-                            .then(data => {
-                                this.report_id = data.report_id;
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                this.message = 'An error occurred.';
-                            });
-                    }
-                }));
+            Alpine.data('reports', (report_id, post_id, user_id) => ({
+            report_id,
+            post_id,
+            user_id,
+            message: '',
+            toggle() {
+            console.log('Sending data:', this.report_id, this.post_id, this.user_id);
+            fetch('/reports/toggle', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]')
+            .content
+            },
+            body: JSON.stringify({
+            report_id: this.report_id,
+            post_id: this.post_id,
+            user_id: this.user_id
+            })
+            })
+            .then(response => {
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text(); // Get raw response text
+            })
+            .then(text => {
+            console.log(text); // Log raw response
+            return JSON.parse(text); // Parse the text as JSON
+            })
+            .then(data => {
+            this.report_id = data.report_id;
+            })
+            .catch(error => {
+            console.error('Error:', error);
+            this.message = 'An error occurred.';
+            });
+            }
+            }));
             });
             */
 
@@ -505,10 +526,10 @@
                         });
                     },
                     // addReply(reply) {
-                    //     const parentComment = this.comments.find(comment => comment.id === reply.comment.parent_id);
-                    //     if (parentComment) {
-                    //         parentComment.replies.push(reply);
-                    //     }
+                    // const parentComment = this.comments.find(comment => comment.id === reply.comment.parent_id);
+                    // if (parentComment) {
+                    // parentComment.replies.push(reply);
+                    // }
                     // },
                     editComment(comment) {
                         comment.editing = true;
@@ -573,34 +594,34 @@
                             });
                     },
                     // sendReply(comment) {
-                    //     console.log(comment.replyText, this.postId, comment.id);
-                    //     fetch('/comments/store', {
-                    //         method: 'POST',
-                    //         headers: {
-                    //             'Content-Type': 'application/json',
-                    //             'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
-                    //         },
-                    //         body: JSON.stringify({ comment: comment.replyText, post_id: this.postId, parent_id: comment.id })
-                    //     })
-                    //     .then(response => {
-                    //         // Log the raw response
-                    //         console.log('Raw response:', response);
-                    //         if (!response.ok) {
-                    //             throw new Error(`HTTP error! status: ${response.status}`);
-                    //         }
-                    //         return response.json();
-                    //     })
-                    //     .then(data => {
-                    //         if (data.success) {
-                    //             comment.replyText = '';
-                    //             this.$el.dispatchEvent(new CustomEvent('reply-added', { detail: data.reply }));
-                    //         } else {
-                    //             console.error('Reply failed:', data.message);
-                    //         }
-                    //     })
-                    //     .catch(error => {
-                    //         console.error('Error:', error);
-                    //     });
+                    // console.log(comment.replyText, this.postId, comment.id);
+                    // fetch('/comments/store', {
+                    // method: 'POST',
+                    // headers: {
+                    // 'Content-Type': 'application/json',
+                    // 'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                    // },
+                    // body: JSON.stringify({ comment: comment.replyText, post_id: this.postId, parent_id: comment.id })
+                    // })
+                    // .then(response => {
+                    // // Log the raw response
+                    // console.log('Raw response:', response);
+                    // if (!response.ok) {
+                    // throw new Error(`HTTP error! status: ${response.status}`);
+                    // }
+                    // return response.json();
+                    // })
+                    // .then(data => {
+                    // if (data.success) {
+                    // comment.replyText = '';
+                    // this.$el.dispatchEvent(new CustomEvent('reply-added', { detail: data.reply }));
+                    // } else {
+                    // console.error('Reply failed:', data.message);
+                    // }
+                    // })
+                    // .catch(error => {
+                    // console.error('Error:', error);
+                    // });
                     // }
                 }
             }
