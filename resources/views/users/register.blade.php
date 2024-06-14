@@ -36,9 +36,13 @@
                     <label for="password" class="block text-sm font-medium leading-6 text-gray-900 mb-2">
                         Password
                     </label>
-                    <input type="password" id="password" name="password" value="{{ old('password') }}"
-                        class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-
+                    <div x-data="{ show: false }" class="flex relative">
+                        <input :type="show ? 'text' : 'password'" id="password" name="password"
+                            value="{{ old('password') }}"
+                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                        <div class="h-5 w-5 bg-slate-500 absolute inset-y-0 top-2 right-1.5" @click="show = !show">
+                        </div>
+                    </div>
                     @error('password')
                         <p>{{ $message }}</p>
                     @enderror
@@ -74,4 +78,5 @@
             </form>
         </div>
     </div>
+
 </x-layout>
