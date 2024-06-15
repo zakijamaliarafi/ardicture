@@ -16,19 +16,21 @@
         </div>
         <div>
             @if (Auth::check() && Auth::user()->id == $user->id)
-            <a href="/profile/edit">Edit</a>
+                <a href="/profile/edit">Edit</a>
             @endif
         </div>
     </div>
-    <div class="m-10 mt-5 mb-32">
+    <div class="m-10 mt-5 mb-32"
+        @if ($liked === true) x-data="{ activeTab: 'liked' }"
+        @else x-data="{ activeTab: 'posts' }" @endif>
         <!-- Buttons to switch between Posts and Liked -->
         <div class="flex space-x-4 mb-6 text-base">
-            <button @click="activeTab = 'posts'"
+            <button @click="activeTab = 'posts'" x-init="() => { console.log('Active Tab:', activeTab); }"
                 :class="activeTab === 'posts' ? 'bg-black text-white' : 'text-black border-black border'"
                 class="px-4 rounded-xl">
                 Posts
             </button>
-            <button @click="activeTab = 'liked'"
+            <button @click="activeTab = 'liked'" x-init="() => { console.log('Active Tab:', activeTab); }"
                 :class="activeTab === 'liked' ? 'bg-black text-white' : 'text-black border-black border'"
                 class="px-4 rounded-xl">
                 Liked
@@ -51,4 +53,29 @@
     </div>
 
     <x-footer />
+    <script>
+        document.addEventListener('alpine:init', () => {
+            console.log('Alpine.js initialized');
+            Alpine.data('profile_preview_handler', () => ({
+                profile_image: '',
+                init() {
+                    console.log('profile_preview_handler initialized');
+                },
+                preview_profile(event) {
+                    profile_image = '';
+                    const files = event.target.files;
+                    let reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.profile_image.push(e.target.result);
+                    }
+                    reader.readAsDataURL(files);
+
+                    document.getElementById('image_container').classList.add('flex');
+                    document.getElementById('preview_image').classList.add('h-full');
+                    this.profile_image.style.display = 'flex'
+                }
+            }));
+
+        });
+    </script>
 </x-layout>

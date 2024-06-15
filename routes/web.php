@@ -11,7 +11,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\CommentController;
 
 // Show Homepage
-Route::get('/', [PostController::class, 'index']);
+Route::get('/', [PostController::class, 'index'])->name('home');
 
 // Show Search Results
 Route::get('/search', [PostController::class, 'search']);
@@ -28,7 +28,7 @@ Route::post('/logout', [UserController::class, 'logout']);
 
 // Show Login Form
 Route::get('/login', [UserController::class, 'login'])
-    ->middleware('guest');
+    ->middleware('guest')->name('login');
 
 // Log In User
 Route::post('/users/authenticate', [UserController::class, 'authenticate']);
@@ -41,12 +41,16 @@ Route::get('/users/{user}', [UserController::class, 'profile'])
 Route::get('/profile', [UserController::class, 'profile'])
     ->middleware('auth');
 
+
 // Show Profile Edit Form
 Route::get('/profile/edit', [UserController::class, 'edit'])
     ->middleware('auth');
 
 // Update Profile
 Route::put('/profile/update', [UserController::class, 'update'])
+    ->middleware('auth');
+
+Route::get('/profile/{liked}', [UserController::class, 'profile_liked'])
     ->middleware('auth');
 
 // Show Admin Dashboard
@@ -102,8 +106,8 @@ Route::post('/comments/store', [CommentController::class, 'store']);
 
 // Update Comment
 Route::put('/comments/{comment}/update', [CommentController::class, 'update'])
-->middleware('auth');
+    ->middleware('auth');
 
 // Delete Comment
 Route::delete('/comments/{comment}/delete', [CommentController::class, 'destroy'])
-->middleware('auth');
+    ->middleware('auth');

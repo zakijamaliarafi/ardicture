@@ -103,7 +103,47 @@ class UserController extends Controller
             'likedPostCount' => $likedPostCount,
             'userPosts' => $userPosts,
             'likedPosts' => $likedPosts,
+            'liked' => false,
+        ]);
+    }
 
+    public function profile_liked($liked, $userId = null)
+    {
+
+        if ($liked) {
+            if ($liked == 1) {
+                $liked = true;
+            } else {
+                return redirect('/profile')->with('message', 'Jangan Usil Di URL');
+            }
+        } else {
+            $liked = true;
+        }
+
+        if ($userId === null) {
+            $userId = auth()->id();
+        }
+
+        $user = User::find($userId);
+
+        if ($user === null) {
+            abort(404);
+        }
+
+        $postCount = Post::countPostsByUserId($userId);
+        $likedPostCount = Like::where('user_id', $userId)->count();
+        $userPosts = Post::getPostsByUserId($userId);
+        $likedPosts = Post::getLikedPosts($userId);
+
+
+
+        return view('users.profile', [
+            'user' => $user,
+            'postCount' => $postCount,
+            'likedPostCount' => $likedPostCount,
+            'userPosts' => $userPosts,
+            'likedPosts' => $likedPosts,
+            'liked' => $liked,
         ]);
     }
 

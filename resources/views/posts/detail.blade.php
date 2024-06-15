@@ -77,8 +77,9 @@
                             <a href="/login" class="px-4 py-1 rounded-md bg-white text-black">Likes</a>
                         </div>
                     @endif
-                    <div x-data="{ open: false }" class="relative self-center" x-cloak>
-                        <button @click="open = !open" class="focus:outline-none">
+                    <!------------------ Triple Dot Action ----------------------->
+                    <div x-data="check_auth()" class="relative self-center" x-cloak>
+                        <button class="focus:outline-none" id="triple-dot-action" @click="require_login">
                             <img class="w-10" src="{{ asset('images/TripleDotAction.png') }}" alt="">
                         </button>
                         @if (Auth::check())
@@ -95,7 +96,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button
-                                                class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
+                                                class="text-left block px-4 py-2 w-full text-gray-800 hover:bg-indigo-500 hover:text-white">
                                                 Delete
                                             </button>
                                         </form>
@@ -145,6 +146,12 @@
                                                             </option>
                                                             <option value="AI Image" class="text-lg">AI Image</option>
                                                             <option value="NSFW" class="text-lg">NSFW</option>
+                                                            <option value="Terms and Service Violation" class="text-lg">
+                                                                Terms and Service Violation
+                                                            </option>
+                                                            <option value="Privacy Breach" class="text-lg">Privacy
+                                                                Breach</option>
+
                                                         </select>
                                                         <button type="submit" @click="toggle_popup = !toggle_popup"
                                                             class="w-full h-8 rounded-full mt-5 bg-orange-500 text-white text-center">Send
@@ -200,34 +207,41 @@
                         <div x-text="message"></div>
                     </div>
                 @endif
-                
+
                 <!-- Comment Form -->
                 @if (Auth::check())
-                <div x-data="addComment({{ $post->id }})">
-                    <form @submit.prevent="sendComment">
-                        @csrf
-                        <div class="flex justify-between items-center my-2">
-                            <div class="w-8 h-8 rounded-full overflow-hidden">
-                                <img class="w-full h-full object-cover" src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}" alt="">
+                    <div x-data="addComment({{ $post->id }})">
+                        <form @submit.prevent="sendComment">
+                            @csrf
+                            <div class="flex justify-between items-center my-2">
+                                <div class="w-8 h-8 rounded-full overflow-hidden">
+                                    <img class="w-full h-full object-cover"
+                                        src="{{ Auth::user()->user_profile ? asset('storage/' . Auth::user()->user_profile) : asset('/images/user.png') }}"
+                                        alt="">
+                                </div>
+                                <input x-model="comment" class="border p-1 w-4/5 rounded" type="text"
+                                    placeholder="Leave a comment" required>
+                                <button type="submit"
+                                    class="bg-ardicture-orange text-white font-extrabold px-4 py-1 rounded-2xl">Send</button>
                             </div>
-                            <input x-model="comment" class="border p-1 w-4/5 rounded" type="text" placeholder="Leave a comment" required>
-                            <button type="submit" class="bg-ardicture-orange text-white font-extrabold px-4 py-1 rounded-2xl">Send</button>
-                        </div>
-                    </form>
-                    <div x-text="message" class="mt-2 text-green-500"></div>
-                </div>
+                        </form>
+                        <div x-text="message" class="mt-2 text-green-500"></div>
+                    </div>
                 @else
-                <div class="mt-4">
-                    <p class="font-medium">Comments</p>
-                </div>
+                    <div class="mt-4">
+                        <p class="font-medium">Comments</p>
+                    </div>
                 @endif
                 <!-- Comments Section -->
                 <div x-data="commentList({{ json_encode($comments) }}, {{ Auth::check() ? Auth::id() : 'null' }}, {{ Auth::check() ? '\'' . Auth::user()->role . '\'' : '' }})" id="comment-list">
                     <template x-for="comment in comments" :key="comment.id">
-                        <div class="flex my-2 mb-20">
+                        <div class="flex mt-4 mb-4">
                             <a :href="'/users/' + comment.user.id">
                                 <div class="w-8 h-8 mt-1 mr-4 rounded-full overflow-hidden">
-                                    <img class="w-full h-full object-cover" :src="comment.user.user_profile ? `/storage/${comment.user.user_profile}` : '/images/user.png'" :alt="comment.user.username">
+                                    <img class="w-full h-full object-cover"
+                                        :src="comment.user.user_profile ? `/storage/${comment.user.user_profile}` :
+                                            '/images/user.png'"
+                                        :alt="comment.user.username">
                                 </div>
                             </a>
                             <div>
@@ -235,41 +249,48 @@
                                     <p class="font-medium" x-text="comment.user.username"></p>
                                 </a>
                                 <p x-show="!comment.editing" x-text="comment.comment"></p>
-                                <input x-show="comment.editing" x-model="comment.editText" class="border p-1 rounded" type="text">
-                                <p class="text-sm text-gray-500" x-text="new Date(comment.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })"></p>
+                                <input x-show="comment.editing" x-model="comment.editText" class="border p-1 rounded"
+                                    type="text">
+                                <p class="text-sm text-gray-500"
+                                    x-text="new Date(comment.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })">
+                                </p>
                             </div>
                             <div x-show="comment.editing" class="mt-7 ml-5">
-                                <button @click="updateComment(comment)" class="text-sm px-2 py-1 text-green-500 hover:bg-green-500 hover:text-white rounded">Save</button>
-                                <button @click="cancelEdit(comment)" class="text-sm px-2 py-1 text-red-500 hover:bg-red-500 hover:text-white rounded">Cancel</button>
+                                <button @click="updateComment(comment)"
+                                    class="text-sm px-2 py-1 text-green-500 hover:bg-green-500 hover:text-white rounded">Save</button>
+                                <button @click="cancelEdit(comment)"
+                                    class="text-sm px-2 py-1 text-red-500 hover:bg-red-500 hover:text-white rounded">Cancel</button>
                             </div>
                             @if (Auth::check())
-                            <template x-if="comment.user.id === authUserId || authUserRole === 'admin'">
-                                <div x-show="!comment.editing" x-data="{ open: false }" class="ml-auto mr-24 mt-4 relative">
-                                    <button @click="open = !open" class="focus:outline-none">
-                                        <img class="w-6" src="{{asset('images/TripleDotAction.png')}}" alt="">
-                                    </button>
-                                    <ul
-                                        x-show="open"
-                                        @click.away="open = false"
-                                        class="absolute right-0 w-20 py-2 bg-white rounded-lg shadow-xl z-10"
-                                    >
-                                        <template x-if="comment.user.id === authUserId">
-                                            <li>
-                                                <button @click="editComment(comment); open = false"  class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Edit</button>
-                                            </li>
-                                        </template>
-                                        <template x-if="comment.user.id === authUserId || authUserRole === 'admin'">
-                                            <li>
-                                                <button @click="deleteComment(comment)" class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Delete</button>
-                                            </li>
-                                        </template>
-                                    </ul>
-                                </div>
-                            </template>
+                                <template x-if="comment.user.id === authUserId || authUserRole === 'admin'">
+                                    <div x-show="!comment.editing" x-data="{ open: false }"
+                                        class="ml-auto mr-24 mt-4 relative">
+                                        <button @click="open = !open" class="focus:outline-none">
+                                            <img class="w-6" src="{{ asset('images/TripleDotAction.png') }}"
+                                                alt="">
+                                        </button>
+                                        <ul x-show="open" @click.away="open = false"
+                                            class="absolute right-0 w-20 py-2 bg-white rounded-lg shadow-xl z-10">
+                                            <template x-if="comment.user.id === authUserId">
+                                                <li>
+                                                    <button @click="editComment(comment); open = false"
+                                                        class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Edit</button>
+                                                </li>
+                                            </template>
+                                            <template
+                                                x-if="comment.user.id === authUserId || authUserRole === 'admin'">
+                                                <li>
+                                                    <button @click="deleteComment(comment)"
+                                                        class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Delete</button>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </template>
                             @endif
                         </div>
                     </template>
-                </div>         
+                </div>
 
             </div>
             <div class="w-2/5">
@@ -279,6 +300,20 @@
         <x-footer />
 
         <script>
+            function check_auth() {
+                return {
+                    open: false,
+                    isLoggedIn: @json(Auth::check()),
+                    require_login() {
+                        if (!this.isLoggedIn) {
+                            window.location.href = '{{ route('login') }}';
+                        } else {
+                            this.open = !this.open;
+                        }
+                    }
+                }
+            }
+
             function tagList(initialTags) {
                 return {
                     tags: initialTags,
@@ -378,45 +413,45 @@
             /*
             document.addEventListener('alpine:init', () => {
 
-                Alpine.data('reports', (report_id, post_id, user_id) => ({
-                    report_id,
-                    post_id,
-                    user_id,
-                    message: '',
-                    toggle() {
-                        console.log('Sending data:', this.report_id, this.post_id, this.user_id);
-                        fetch('/reports/toggle', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]')
-                                        .content
-                                },
-                                body: JSON.stringify({
-                                    report_id: this.report_id,
-                                    post_id: this.post_id,
-                                    user_id: this.user_id
-                                })
-                            })
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-                                return response.text(); // Get raw response text
-                            })
-                            .then(text => {
-                                console.log(text); // Log raw response
-                                return JSON.parse(text); // Parse the text as JSON
-                            })
-                            .then(data => {
-                                this.report_id = data.report_id;
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                                this.message = 'An error occurred.';
-                            });
-                    }
-                }));
+            Alpine.data('reports', (report_id, post_id, user_id) => ({
+            report_id,
+            post_id,
+            user_id,
+            message: '',
+            toggle() {
+            console.log('Sending data:', this.report_id, this.post_id, this.user_id);
+            fetch('/reports/toggle', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]')
+            .content
+            },
+            body: JSON.stringify({
+            report_id: this.report_id,
+            post_id: this.post_id,
+            user_id: this.user_id
+            })
+            })
+            .then(response => {
+            if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text(); // Get raw response text
+            })
+            .then(text => {
+            console.log(text); // Log raw response
+            return JSON.parse(text); // Parse the text as JSON
+            })
+            .then(data => {
+            this.report_id = data.report_id;
+            })
+            .catch(error => {
+            console.error('Error:', error);
+            this.message = 'An error occurred.';
+            });
+            }
+            }));
             });
             */
 
@@ -461,7 +496,14 @@
 
             function commentList(initialComments, authUserId, authUserRole, postId) {
                 return {
-                    comments: initialComments.map(comment => ({ ...comment, editing: false, editText: comment.comment, showReplyForm: false, replyText: '', replies: comment.replies || [] })),
+                    comments: initialComments.map(comment => ({
+                        ...comment,
+                        editing: false,
+                        editText: comment.comment,
+                        showReplyForm: false,
+                        replyText: '',
+                        replies: comment.replies || []
+                    })),
                     authUserId: authUserId,
                     authUserRole: authUserRole,
                     postId: postId,
@@ -474,13 +516,20 @@
                         });
                     },
                     addComment(comment) {
-                        this.comments.push({ ...comment.comment, editing: false, editText: comment.comment, showReplyForm: false, replyText: '', replies: [] });
+                        this.comments.push({
+                            ...comment.comment,
+                            editing: false,
+                            editText: comment.comment,
+                            showReplyForm: false,
+                            replyText: '',
+                            replies: []
+                        });
                     },
                     // addReply(reply) {
-                    //     const parentComment = this.comments.find(comment => comment.id === reply.comment.parent_id);
-                    //     if (parentComment) {
-                    //         parentComment.replies.push(reply);
-                    //     }
+                    // const parentComment = this.comments.find(comment => comment.id === reply.comment.parent_id);
+                    // if (parentComment) {
+                    // parentComment.replies.push(reply);
+                    // }
                     // },
                     editComment(comment) {
                         comment.editing = true;
@@ -492,85 +541,87 @@
                     },
                     updateComment(comment) {
                         fetch(`/comments/${comment.id}/update`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
-                            },
-                            body: JSON.stringify({ comment: comment.editText })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                comment.comment = comment.editText;
-                                comment.editing = false;
-                            } else {
-                                console.error('Update failed:', data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                                },
+                                body: JSON.stringify({
+                                    comment: comment.editText
+                                })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    comment.comment = comment.editText;
+                                    comment.editing = false;
+                                } else {
+                                    console.error('Update failed:', data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
                     },
                     deleteComment(comment) {
                         fetch(`/comments/${comment.id}/delete`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
-                            },
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                this.comments = this.comments.filter(c => c.id !== comment.id);
-                            } else {
-                                console.error('Delete failed:', data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                                },
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    this.comments = this.comments.filter(c => c.id !== comment.id);
+                                } else {
+                                    console.error('Delete failed:', data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
                     },
                     // sendReply(comment) {
-                    //     console.log(comment.replyText, this.postId, comment.id);
-                    //     fetch('/comments/store', {
-                    //         method: 'POST',
-                    //         headers: {
-                    //             'Content-Type': 'application/json',
-                    //             'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
-                    //         },
-                    //         body: JSON.stringify({ comment: comment.replyText, post_id: this.postId, parent_id: comment.id })
-                    //     })
-                    //     .then(response => {
-                    //         // Log the raw response
-                    //         console.log('Raw response:', response);
-                    //         if (!response.ok) {
-                    //             throw new Error(`HTTP error! status: ${response.status}`);
-                    //         }
-                    //         return response.json();
-                    //     })
-                    //     .then(data => {
-                    //         if (data.success) {
-                    //             comment.replyText = '';
-                    //             this.$el.dispatchEvent(new CustomEvent('reply-added', { detail: data.reply }));
-                    //         } else {
-                    //             console.error('Reply failed:', data.message);
-                    //         }
-                    //     })
-                    //     .catch(error => {
-                    //         console.error('Error:', error);
-                    //     });
+                    // console.log(comment.replyText, this.postId, comment.id);
+                    // fetch('/comments/store', {
+                    // method: 'POST',
+                    // headers: {
+                    // 'Content-Type': 'application/json',
+                    // 'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                    // },
+                    // body: JSON.stringify({ comment: comment.replyText, post_id: this.postId, parent_id: comment.id })
+                    // })
+                    // .then(response => {
+                    // // Log the raw response
+                    // console.log('Raw response:', response);
+                    // if (!response.ok) {
+                    // throw new Error(`HTTP error! status: ${response.status}`);
+                    // }
+                    // return response.json();
+                    // })
+                    // .then(data => {
+                    // if (data.success) {
+                    // comment.replyText = '';
+                    // this.$el.dispatchEvent(new CustomEvent('reply-added', { detail: data.reply }));
+                    // } else {
+                    // console.error('Reply failed:', data.message);
+                    // }
+                    // })
+                    // .catch(error => {
+                    // console.error('Error:', error);
+                    // });
                     // }
                 }
             }
@@ -582,35 +633,39 @@
                     message: '',
                     sendComment() {
                         fetch('/comments/store', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
-                            },
-                            body: JSON.stringify({ comment: this.comment, post_id: this.postId })
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                this.comment = '';
-                                document.querySelector('#comment-list').dispatchEvent(new CustomEvent('comment-added', { detail: data }));
-                                this.message = data.message;
-                            } else {
-                                this.message = data.message;
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            this.message = 'An error occurred.';
-                        });
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
+                                },
+                                body: JSON.stringify({
+                                    comment: this.comment,
+                                    post_id: this.postId
+                                })
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.success) {
+                                    this.comment = '';
+                                    document.querySelector('#comment-list').dispatchEvent(new CustomEvent('comment-added', {
+                                        detail: data
+                                    }));
+                                    this.message = data.message;
+                                } else {
+                                    this.message = data.message;
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                this.message = 'An error occurred.';
+                            });
                     }
                 }
             }
-
         </script>
     </x-layout>

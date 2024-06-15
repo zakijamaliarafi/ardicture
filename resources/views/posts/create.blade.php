@@ -4,6 +4,15 @@
             @csrf
 
             <div class="w-1/2">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <label for="images">
                     <div x-data="preview_handler()" id="image_container"
                         class="relative border-2 rounded-md border-orange-400 border-dashed h-60 content-center mt-2">
@@ -39,7 +48,8 @@
                             <p class="text-center font-bold mt-1" id="text_add">Choose your images</p>
                         </div>
 
-                        <input type="file" id="images" name="images[]" hidden multiple @change="preview_images">
+                        <input type="file" id="images" name="images[]" accept=".jpg, .jpeg, .png" hidden multiple
+                            @change="preview_images">
                     </div>
 
                 </label>
