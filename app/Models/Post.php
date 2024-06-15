@@ -85,9 +85,9 @@ class Post extends Model
         return $posts;
     }
 
-    public static function getPosts($numberOfPost)
+    public static function getPosts()
     {
-        $posts = self::with('user')->orderBy('created_at', 'desc')->take($numberOfPost)->get();
+        $posts = self::with('user')->orderBy('created_at', 'desc')->simplePaginate(20);
 
         foreach ($posts as $post) {
             $user = $post->user;
@@ -100,7 +100,7 @@ class Post extends Model
         return $posts;
     }
 
-    public static function getPostsByTag($tag)
+    public static function getPostsByTag($tag, $index)
     {
         $tag = Tag::where('tag', $tag)->first();
 
@@ -108,7 +108,13 @@ class Post extends Model
             return [];
         }
 
-        $posts = $tag->posts()->with('user')->orderBy('created_at', 'desc')->take(20)->get();
+        if(isset($index)){
+            $posts = $tag->posts()->with('user')->orderBy('created_at', 'desc')->simplePaginate(
+                $perPage = 20, $columns = ['*'], $pageName = "posts" . ($index + 1)
+            );
+        }else{
+            $posts = $tag->posts()->with('user')->orderBy('created_at', 'desc')->simplePaginate(20);
+        }        
 
         foreach ($posts as $post) {
             $user = $post->user;

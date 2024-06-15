@@ -85,7 +85,7 @@
                         @if (Auth::check())
                             <ul x-show="open" @click.away="open = false"
                                 class="absolute right-0 w-48 py-2 mt-2 bg-white rounded-lg shadow-xl">
-                                @if (Auth::user()->id == $user->id)
+                                @if (Auth::user()->id == $user->id || Auth::user()->role === 'admin')
                                     <li>
                                         <a href="/posts/{{ $post->id }}/edit"
                                             class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Edit</a>
@@ -97,18 +97,6 @@
                                             @method('DELETE')
                                             <button
                                                 class="text-left block px-4 py-2 w-full text-gray-800 hover:bg-indigo-500 hover:text-white">
-                                                Delete
-                                            </button>
-                                        </form>
-                                    </li>
-                                @elseif (Auth::user()->role === 'admin')
-                                    <li>
-                                        <form method="POST" action="/posts/{{ $post->id }}"
-                                            onsubmit="return confirm('Are you sure you want to delete this post?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button
-                                                class="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">
                                                 Delete
                                             </button>
                                         </form>
@@ -186,9 +174,9 @@
                     </a>
                 </div>
                 <!-- Display tags -->
-                <div class="flex gap-2" x-data="tagList({{ json_encode($tags) }})" id="tag-list">
+                <div class="flex flex-wrap gap-x-2" x-data="tagList({{ json_encode($tags) }})" id="tag-list">
                     <template x-for="tag in tags" :key="tag.id">
-                        <a class="bg-gray-200 rounded p-1 mr-2 my-2" :href="'/tags/' + tag.tag"
+                        <a class="bg-gray-200 rounded p-1 mr-2 my-1" :href="'/tags/' + tag.tag"
                             x-text="formatTag(tag.tag)"></a>
                     </template>
                 </div>
