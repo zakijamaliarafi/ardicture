@@ -5,10 +5,12 @@
             @csrf
             @method('PUT')
 
+            @if(Auth::user()->id == $post->user_id)
             <div class="mt-12 mb-3 flex flex-col">
                 <label for="title" class="form-label font-medium text-3xl">Title</label>
                 <textarea class="form-control w-5/12 mt-2" id="title" name="title" rows="3" required>{{ $post->title }}</textarea>
             </div>
+            @endif
 
             <!-- Tag input section -->
             <div>

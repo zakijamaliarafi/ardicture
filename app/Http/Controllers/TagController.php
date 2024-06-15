@@ -54,7 +54,7 @@ class TagController extends Controller
             abort(404, 'Tag not found');
         }
 
-        $posts = $tag->posts()->with('user')->orderBy('created_at', 'desc')->paginate(20);
+        $posts = $tag->posts()->with('user')->orderBy('created_at', 'desc')->simplePaginate(20);
 
         foreach ($posts as $post) {
             $user = $post->user;
