@@ -96,7 +96,7 @@
                         </a>
                     </div>
 
-                    @if ((url()->current() == url('/profile/1')) | (url()->current() == '/profile'))
+                    @if (url()->current() == url('/profile/1'))
                         <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
@@ -104,12 +104,10 @@
                 <div class="w-48">
                     <p class="font-sans text-xl text-left ml-4">Favorites</p>
                 </div>
-                @if ((url()->current() == '/profile/1') | (url()->current() == '/profile'))
-                    <div x-show="activeTab === 'posts'">
-                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
-                        </div>
-                        <div class="w-6">
-                        </div>
+                @if (url()->current() == url('/profile/1'))
+                    <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                    </div>
+                    <div class="w-6">
                     </div>
                 @endif
             </div>
@@ -149,8 +147,7 @@
                     </div>
 
                     @if ((url()->current() == url('/profile')) | (url()->current() == '/profile/1'))
-                        <div x-show="activeTab === 'posts'" id="profile_closed_indicator"
-                            class="ml-1 w-1 bg-orange-500 h-10">
+                        <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
                 </div>
@@ -160,11 +157,9 @@
                     </a>
                 </div>
                 @if ((url()->current() == url('/profile')) | (url()->current() == '/profile/1'))
-                    <div x-show="activeTab === 'posts'" id="profile_open_indicator">
-                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
-                        </div>
-                        <div class="w-6">
-                        </div>
+                    <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                    </div>
+                    <div class="w-6">
                     </div>
                 @endif
             </div>
