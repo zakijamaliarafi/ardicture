@@ -91,22 +91,21 @@
             <div class="w-72 bg-white flex pt-6 h-16" @click="activeTab = 'liked'">
                 <div class="w-16 flex justify-center items-center">
                     <div class="w-14 content-center">
-                        <a class="" href="/profile">
+                        <a class="" href="/profile/1">
                             <img src="{{ asset('images/Bookmark.png') }}" alt="Sidebar Action" class="h-6 mx-auto">
                         </a>
                     </div>
 
-                    @if (url()->current() == url('/profile'))
-                        <div x-show="activeTab === 'liked'" id="liked_closed_indicator"
-                            class="ml-1 w-1 bg-orange-500 h-10">
+                    @if ((url()->current() == url('/profile/1')) | (url()->current() == '/profile'))
+                        <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
                 </div>
                 <div class="w-48">
                     <p class="font-sans text-xl text-left ml-4">Favorites</p>
                 </div>
-                @if (url()->current() == '/profile')
-                    <div x-show="activeTab === 'liked'" id="liked_open_indicator">
+                @if ((url()->current() == '/profile/1') | (url()->current() == '/profile'))
+                    <div x-show="activeTab === 'posts'">
                         <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
                         </div>
                         <div class="w-6">
@@ -149,18 +148,18 @@
                         </a>
                     </div>
 
-                    @if (url()->current() == url('/profile'))
+                    @if ((url()->current() == url('/profile')) | (url()->current() == '/profile/1'))
                         <div x-show="activeTab === 'posts'" id="profile_closed_indicator"
                             class="ml-1 w-1 bg-orange-500 h-10">
                         </div>
                     @endif
                 </div>
                 <div class="w-48">
-                    <a href="/profile">
+                    <a href="/profile/">
                         <p class="font-sans text-xl text-left ml-4">Profile</p>
                     </a>
                 </div>
-                @if (url()->current() == url('/profile'))
+                @if ((url()->current() == url('/profile')) | (url()->current() == '/profile/1'))
                     <div x-show="activeTab === 'posts'" id="profile_open_indicator">
                         <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
                         </div>
@@ -181,8 +180,7 @@
                         </div>
 
                         @if (url()->current() == url('/reports'))
-                            <div x-show="activeTab === 'posts'" id="closed_indicator"
-                                class="ml-1 w-1 bg-orange-500 h-10">
+                            <div id="closed_indicator" class="ml-1 w-1 bg-orange-500 h-10">
                             </div>
                         @endif
                     </div>
@@ -192,11 +190,9 @@
                         </a>
                     </div>
                     @if (url()->current() == url('/reports'))
-                        <div x-show="activeTab === 'posts'">
-                            <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
-                            </div>
-                            <div class="w-6">
-                            </div>
+                        <div class="bg-orange-500 ml-6 h-100 w-1 mb-2">
+                        </div>
+                        <div class="w-6">
                         </div>
                     @endif
                 </div>
