@@ -24,7 +24,7 @@ class PostController extends Controller
         // // Fetch 8 random tags from the database
         // $tags = Tag::has('posts')->inRandomOrder()->limit(8)->pluck('tag')->toArray();
         
-        $tags = $tags = array('Anime', 'Art','Genshin', 'Landscape', 'Manga', 'Photography', 'Poster', 'Wallpaper');
+        $tags = $tags = array('Anime', 'Art', 'Landscape', 'Manga','Meme', 'Photography', 'Poster', 'Wallpaper');
 
         // Initialize an array to store posts by tag
         $postsByTag = [];
