@@ -232,7 +232,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        // Make sure logged in user is owner
+        // Make sure logged in user is owner or admin
         if ($post->user_id != auth()->id()) {
             if (auth()->user()->role != 'admin') {
                 abort(403, 'Unauthorized Action');
@@ -255,19 +255,24 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        // Make sure logged in user is owner
+        // Make sure logged in user is owner or admin
         if ($post->user_id != auth()->id()) {
             if (auth()->user()->role != 'admin') {
                 abort(403, 'Unauthorized Action');
             }
         }
 
-        if ($request->has('title') && $request->title !== null) {
-            $validatedData = $request->validate([
-                'title' => 'required|max:255',
-            ]);
-            $post->update($validatedData);
-        } 
+        $validatedData = $request->validate([
+            'title' => 'required|max:255',
+        ]);
+        $post->update($validatedData);
+
+        // if ($request->has('title') && $request->title !== null) {
+        //     $validatedData = $request->validate([
+        //         'title' => 'required|max:255',
+        //     ]);
+        //     $post->update($validatedData);
+        // } 
 
         // Get the new tags from the request and process them
         $newTags = collect(explode(',', $request->input('tags')))
