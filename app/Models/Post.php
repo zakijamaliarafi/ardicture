@@ -51,6 +51,7 @@ class Post extends Model
             $user = $post->user;
             $post->userId = $user->id;
             $post->username = $user->username;
+            $post->name = $user->name;
             $post->profile = $user->user_profile;
             $post->image = optional($post->images()->first())->image;
         }
@@ -93,6 +94,7 @@ class Post extends Model
             $user = $post->user;
             $post->userId = $user->id;
             $post->username = $user->username;
+            $post->name = $user->name;
             $post->profile = $user->user_profile;
             $post->image = optional($post->images()->first())->image;
         }
@@ -120,6 +122,7 @@ class Post extends Model
             $user = $post->user;
             $post->userId = $user->id;
             $post->username = $user->username;
+            $post->name = $user->name;
             $post->profile = $user->user_profile;
             $post->image = optional($post->images()->first())->image;
         }
@@ -135,6 +138,7 @@ class Post extends Model
             $user = $post->user;
             $post->userId = $user->id;
             $post->username = $user->username;
+            $post->name = $user->name;
             $post->profile = $user->user_profile;
             $post->image = optional($post->images()->first())->image;
         }

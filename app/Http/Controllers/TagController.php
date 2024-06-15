@@ -60,6 +60,7 @@ class TagController extends Controller
             $user = $post->user;
             $post->userId = $user->id;
             $post->username = $user->username;
+            $post->name = $user->name;
             $post->profile = $user->user_profile;
             $post->image = optional($post->images()->first())->image;
         }

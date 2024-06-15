@@ -76,6 +76,7 @@ class PostController extends Controller
                     'posts.created_at',
                     'posts.updated_at',
                     'users.id as user_id',
+                    'users.name',
                     'users.username',
                     'users.user_profile',
                     DB::raw('MAX(images.image) as post_image') // Aggregate to avoid the GROUP BY issue
@@ -86,6 +87,7 @@ class PostController extends Controller
                     'posts.created_at',
                     'posts.updated_at',
                     'users.id',
+                    'users.name',
                     'users.username',
                     'users.user_profile'
                 )
@@ -96,6 +98,7 @@ class PostController extends Controller
         foreach ($posts as $post) {
             $post->userId = $post->user_id;
             $post->username = $post->username;
+            $post->name = $post->name;
             $post->profile = $post->user_profile;
             $post->image = $post->post_image;
         }

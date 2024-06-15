@@ -14,7 +14,7 @@
                     src="{{ $post->profile ? asset('storage/' . $post->profile) : asset('/images/user.png') }}"
                     alt="">
             </div>
-            <p class="ml-2">{{ $post->user->name }}</p>
+            <p class="ml-2">{{ $post->name }}</p>
         </div>
     </a>
 
