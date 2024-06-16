@@ -349,7 +349,7 @@ class PostController extends Controller
             return redirect()->route('reports.show');
         }
 
-        return redirect()->route('home');
+        return redirect()->route('users.profile', ['user' => $userId]);
     }
 
     public function destroyPost($id)
