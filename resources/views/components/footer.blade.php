@@ -16,7 +16,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <img class="h-4" src="{{asset('images/Phone.png')}}" alt="">
-                    <p class="text-sm font-normal">+62 851-5543-3460</p>
+                    <p class="text-sm font-normal">+62 877-1702-2003</p>
                 </div>
             </div>
             <div>
