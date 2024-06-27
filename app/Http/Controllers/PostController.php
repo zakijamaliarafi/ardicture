@@ -23,8 +23,8 @@ class PostController extends Controller
     {
         // // Fetch 8 random tags from the database
         // $tags = Tag::has('posts')->inRandomOrder()->limit(8)->pluck('tag')->toArray();
-        
-        $tags = $tags = array('Anime', 'Art', 'Landscape', 'Manga','Meme', 'Photography', 'Poster', 'Wallpaper');
+
+        $tags = $tags = array('Anime', 'Art', 'Landscape', 'Manga', 'Meme', 'Photography', 'Poster', 'Wallpaper');
 
         // Initialize an array to store posts by tag
         $postsByTag = [];
@@ -56,43 +56,47 @@ class PostController extends Controller
         ]);
     }
 
+    public function about()
+    {
+        return view('about', []);
+    }
 
     public function search(Request $request)
     {
         $search = $request->input('search');
 
         $posts = DB::table('posts')
-                ->where(function($query) use ($search) {
-                    $query->where('posts.title', 'like', '%' . $search . '%')
-                        ->orWhere('tags.tag', 'like', '%' . $search . '%');
-                })
-                ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')
-                ->join('tags', 'post_tag.tag_id', '=', 'tags.id')
-                ->join('users', 'posts.user_id', '=', 'users.id')
-                ->leftJoin('images', 'posts.id', '=', 'images.post_id')
-                ->select(
-                    'posts.id',
-                    'posts.title',
-                    'posts.created_at',
-                    'posts.updated_at',
-                    'users.id as user_id',
-                    'users.name',
-                    'users.username',
-                    'users.user_profile',
-                    DB::raw('MAX(images.image) as post_image') // Aggregate to avoid the GROUP BY issue
-                )
-                ->groupBy(
-                    'posts.id',
-                    'posts.title',
-                    'posts.created_at',
-                    'posts.updated_at',
-                    'users.id',
-                    'users.name',
-                    'users.username',
-                    'users.user_profile'
-                )
-                ->orderBy('created_at', 'desc')
-                ->simplePaginate(20);
+            ->where(function ($query) use ($search) {
+                $query->where('posts.title', 'like', '%' . $search . '%')
+                    ->orWhere('tags.tag', 'like', '%' . $search . '%');
+            })
+            ->join('post_tag', 'posts.id', '=', 'post_tag.post_id')
+            ->join('tags', 'post_tag.tag_id', '=', 'tags.id')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->leftJoin('images', 'posts.id', '=', 'images.post_id')
+            ->select(
+                'posts.id',
+                'posts.title',
+                'posts.created_at',
+                'posts.updated_at',
+                'users.id as user_id',
+                'users.name',
+                'users.username',
+                'users.user_profile',
+                DB::raw('MAX(images.image) as post_image') // Aggregate to avoid the GROUP BY issue
+            )
+            ->groupBy(
+                'posts.id',
+                'posts.title',
+                'posts.created_at',
+                'posts.updated_at',
+                'users.id',
+                'users.name',
+                'users.username',
+                'users.user_profile'
+            )
+            ->orderBy('created_at', 'desc')
+            ->simplePaginate(20);
         $posts->appends(['search' => $search]);
 
         foreach ($posts as $post) {
@@ -283,11 +287,11 @@ class PostController extends Controller
 
         // Get the new tags from the request and process them
         $newTags = collect(explode(',', $request->input('tags')))
-                    ->map(function ($tag) {
-                        return strtolower(str_replace(' ', '_', trim($tag)));
-                    })
-                    ->filter() // Filter out empty tags
-                    ->unique();
+            ->map(function ($tag) {
+                return strtolower(str_replace(' ', '_', trim($tag)));
+            })
+            ->filter() // Filter out empty tags
+            ->unique();
 
         // Get the existing tags from the database
         $existingTags = $post->tags->pluck('tag');

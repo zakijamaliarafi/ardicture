@@ -13,6 +13,9 @@ use App\Http\Controllers\CommentController;
 // Show Homepage
 Route::get('/', [PostController::class, 'index'])->name('home');
 
+// About Us
+Route::get('/about', [PostController::class, 'about'])->name('about');
+
 // Show Search Results
 Route::get('/search', [PostController::class, 'search']);
 
